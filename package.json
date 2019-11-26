@@ -32,5 +32,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/three": "^0.103.2",
+    "mobx": "^5.15.0",
+    "mobx-react": "^6.1.4",
+    "react-desktop": "^0.3.9",
+    "react-three": "^0.9.7",
+    "react-three-fiber": "^3.0.15",
+    "three": "^0.110.0"
   }
 }
