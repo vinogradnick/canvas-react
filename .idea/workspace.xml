@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81df3304-8752-4ca6-9aac-b3638d607507" name="Default Changelist" comment="" />
+    <list default="true" id="81df3304-8752-4ca6-9aac-b3638d607507" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/components/WebglContainer/WebGlContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/WebglContainer/WebGlContainer.tsx" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -37,10 +39,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/WebglContainer/WebGlContainer.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="28" column="38" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
+            <state relative-caret-position="-77">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
               <folding>
-                <element signature="e#0#39#0" expanded="true" />
+                <element signature="e#0#50#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -328,15 +330,16 @@
       <option name="presentableId" value="Default" />
       <updated>1574684636418</updated>
       <workItem from="1574684639113" duration="12900000" />
-      <workItem from="1574771431558" duration="9525000" />
+      <workItem from="1574771431558" duration="12416000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22425000" />
+    <option name="totallyTimeSpent" value="25316000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1440" height="878" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info id="npm" order="1" side_tool="true" />
@@ -641,10 +644,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/WebglContainer/WebGlContainer.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="28" column="38" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
+        <state relative-caret-position="-77">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#50#0" expanded="true" />
           </folding>
         </state>
       </provider>

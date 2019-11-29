@@ -1,7 +1,36 @@
-import React, {Component} from 'react';
-import * as THREE from 'three/src/Three'
+import React, {Component, useEffect} from 'react';
+import * as THREE from 'three'
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {Canvas, useFrame, useThree} from 'react-three-fiber'
 
-import {Canvas, useFrame} from 'react-three-fiber'
+
+function Camera(props) {
+    const ref = React.useRef(null);
+    const {setDefaultCamera} = useThree();
+    // Make the camera known to the system
+    useEffect(() => void setDefaultCamera(ref.current), [])
+    // Update it every frame
+    useFrame(() => ref.current.updateMatrixWorld())
+    return <perspectiveCamera ref={ref} {...props} />
+}
+
+
+function Thing() {
+
+
+    return (
+
+        <mesh
+            visible
+            userData={{test: 'hello'}}
+            position={new THREE.Vector3(1, 2, 3)}
+
+            material={new THREE.MeshBasicMaterial({color: new THREE.Color('hotpink'), transparent: true})}
+        >
+            <Controls/>
+        </mesh>
+    )
+}
 
 class WebGlContainer extends Component {
     private ref;
@@ -12,29 +41,16 @@ class WebGlContainer extends Component {
     constructor(props) {
 
         super(props);
-        this.ref = React.createRef();
-        const geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
-        geometry.vertices.push(new THREE.Vector3(0, 10, 0));
-        geometry.vertices.push(new THREE.Vector3(10, 0, 0));
-        var material = new THREE.LineBasicMaterial({color: new THREE.Color('skyblue'), linewidth: 10});
-        this.line = new THREE.Line(geometry, material);
+
     }
 
     render() {
-        const camera = new THREE.PerspectiveCamera(33, window.innerWidth / window.innerHeight, 0.1, 100);
 
         return (
 
-            <Canvas camera={{fov: 70,  near: 0.1, far: 100}}>
-                <mesh
-                    geometry={this.line}
-                    onClick={e => this.ref.current.rotation.y += 1}
-                    ref={this.ref}
-                >
-
-
-                </mesh>
+            <Canvas gl2={true} style={{height: '750px'}}>
+                <Camera position={[0, 0, 10]}/>
+                <Thing/>
             </Canvas>
         )
 
