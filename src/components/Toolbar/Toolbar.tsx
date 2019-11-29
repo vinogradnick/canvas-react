@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import group from '../../assets/img/group.svg';
-import {shapeStore} from "../../Store/ShapeStore";
+import { shapeStore } from "../../Store/ShapeStore";
 
 class Toolbar extends Component {
     render() {
@@ -9,7 +9,7 @@ class Toolbar extends Component {
                 <div className="tool-item" onClick={e => shapeStore.createLine()}>
                     Создание линии
                 </div>
-                <div className="tool-item">
+                <div className="tool-item" onClick={e => shapeStore.removeSelected()}>
                     Удаление линии
                 </div>
                 <div className="tool-item" onClick={e => shapeStore.groupFigures()}>

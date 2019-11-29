@@ -1,10 +1,10 @@
-import {IShape} from "../Models/IShape";
-import {observable, action, IObservableValue} from 'mobx';
-import {ShapeCollection} from "../Models/ShapeCollection";
-import {GroupShape} from "../Models/Shapes/GroupShape";
+import { IShape } from "../Models/IShape";
+import { observable, action, IObservableValue } from 'mobx';
+import { ShapeCollection } from "../Models/ShapeCollection";
+import { GroupShape } from "../Models/Shapes/GroupShape";
 import Point3D from "../Models/Point3D";
-import {LineShape} from "../Models/Shapes/LineShape";
-import {PAGE_SIZE} from "../Models/const";
+import { LineShape } from "../Models/Shapes/LineShape";
+import { PAGE_SIZE } from "../Models/const";
 
 export const rd = (max: number): number => Math.ceil(Math.random() * max);
 
@@ -30,6 +30,10 @@ export class ShapeStore {
 
     @action removeItem(key: string) {
         this.group.children.removeItem(key);
+
+    }
+    @action removeSelected() {
+        this.group.children.removeSelected();
 
     }
 

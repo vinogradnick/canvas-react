@@ -13,8 +13,8 @@ const App: React.FC = () => {
         <>
             <div className="container">
                 <Provider shapeStore={shapeStore}>
-                    {/*<SvgContainer />*/}
-                    <WebGlContainer/>
+                    <SvgContainer />
+                    {/* <WebGlContainer/> */}
                     <Sidebar />
 
                 </Provider>
