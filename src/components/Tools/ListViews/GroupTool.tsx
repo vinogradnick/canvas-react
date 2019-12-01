@@ -15,7 +15,12 @@ export default class GroupTool extends Component<{ group: GroupShape, focus: () 
         const { key, children } = this.props.group;
         return (
             <ul>
-                <span className="group-header" onClick={e => this.props.focus()}>
+                <span className="group-header" onClick={e => this.props.focus()} style={
+                    {
+                        backgroundColor: this.props.group.isFocused ? '#806058' : '',
+
+                    }
+                }>
                     <div className="group-header-item">
                         <img src={folder} width={16} height={16} alt="" />
 

@@ -1,60 +1,61 @@
 body {
-    background-color: #2b292a;
+  background-color: black;
 }
 
 svg {
-    width: 1152px;
-    height: 750px;
-    display: block;
-    background-color: snow;
+  width: 1152px;
+  height: 750px;
+  display: block;
+  position: absolute;
+  background-color: white;
+}
+.svg-flex-container {
+  width: 1152px;
+  height: 750px;
+  display: block;
 }
 
 .nav-container {
-    display: flex;
-    flex-direction: row;
-
-
+  display: flex;
+  flex-direction: row;
 }
 
 .container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .sidebar {
-
-    width: 20%;
-    height: 750px;
-    background-color: #504c4c;
+  width: 20%;
+  height: 750px;
 }
 
 .sidebar .sidebar-container ul {
-    list-style: none;
+  list-style: none;
 }
 
 .sidebar .sidebar-container ul > .group-header {
-    color: snow;
-    display: flex;
-    flex-direction: row;
+  color: snow;
+  display: flex;
+  flex-direction: row;
 }
 
 .sidebar .sidebar-container ul > .group-header > .group-header-item {
-    padding: 5px;
+  padding: 5px;
 }
 
 .sidebar .mouse-point {
-    padding: 10px;
-    height: 40px;
-    background-color: black;
-    color: snow;
+  padding: 10px;
+  height: 40px;
+  background-color: #2d2121;
+  color: snow;
 }
 
 .nav-container .tool-item {
-    margin: 20px;
-    color: snow;
-
+  margin: 20px;
+  color: snow;
 }
 
 .point-text {
-    color: snow;
+  color: snow;
 }

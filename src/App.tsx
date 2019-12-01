@@ -13,7 +13,10 @@ const App: React.FC = () => {
         <>
             <div className="container">
                 <Provider shapeStore={shapeStore}>
-                    <SvgContainer />
+                    <div className="svg-flex-container">
+                        <SvgContainer />
+                    </div>
+
                     {/* <WebGlContainer/> */}
                     <Sidebar />
 

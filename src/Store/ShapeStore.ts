@@ -40,13 +40,16 @@ export class ShapeStore {
     @action groupFigures() {
         const lines = this.group.children.getSelectLines;
         const group = new GroupShape(null, ...lines);
+        if (lines.length > 0) {
+            lines.forEach(item => {
 
-        lines.forEach(item => {
+                this.group.children.removeItem(item.key)
+            });
 
-            this.group.children.removeItem(item.key)
-        });
-        this.group.children.addItem(group);
-        group.focus();
+            this.group.children.addItem(group);
+            group.focus();
+        }
+
 
     }
 
