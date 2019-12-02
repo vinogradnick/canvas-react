@@ -1,9 +1,12 @@
-import {IShape} from "./IShape";
-import {observable, action, computed} from 'mobx';
-import {LineShape} from "./Shapes/LineShape";
+import { IShape } from "./IShape";
+import { observable, action, computed } from 'mobx';
+import { LineShape } from "./Shapes/LineShape";
 import Point3D from "./Point3D";
-import {PAGE_SIZE} from "./const";
-import {ShapeType} from "./ShapeType";
+import { PAGE_SIZE } from "./const";
+import { ShapeType } from "./ShapeType";
+import { tsExpressionWithTypeArguments } from "@babel/types";
+import { Camera3d } from "./Camera";
+import { Matrix } from "./Matrix";
 
 export class ShapeCollection {
     @observable collection: Array<IShape>;
@@ -31,6 +34,14 @@ export class ShapeCollection {
     @computed get getSelectedGroupes() {
         return this.collection.filter(item => item.type === ShapeType.GROUP && item.isFocused);
 
+    }
+    @action projection() {
+        return this.collection.forEach(item => {
+            const mtx = Camera3d.rotationMatrix;
+            console.log(mtx);
+            const p = Matrix.convertToPoints(Matrix.transform(Matrix.convertToMatrix(...item.points), mtx));
+            item.points = [p[0], p[1]];
+        })
     }
 
     @action public removeItem = (key: string) =>
@@ -77,7 +88,7 @@ export class ShapeCollection {
             if (arrShapes[j].maxZ < maxZ)
                 maxZ = arrShapes[j].z;
         }
-        return {minX, minY, maxX, maxY, maxZ, minZ};
+        return { minX, minY, maxX, maxY, maxZ, minZ };
 
     }
 

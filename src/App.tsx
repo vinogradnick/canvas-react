@@ -11,21 +11,20 @@ import WebGlContainer from "./components/WebglContainer/WebGlContainer";
 const App: React.FC = () => {
     return (
         <>
+
             <div className="container">
                 <Provider shapeStore={shapeStore}>
-                    <div className="svg-flex-container">
-                        <SvgContainer />
-                    </div>
 
-                    {/* <WebGlContainer/> */}
+
+                    <SvgContainer />
                     <Sidebar />
 
                 </Provider>
 
 
             </div>
-
             <Toolbar />
+
         </>
     );
 }

@@ -6,11 +6,11 @@ svg {
   width: 1152px;
   height: 750px;
   display: block;
-  position: absolute;
+  transform-style: preserve-3d;
   background-color: white;
 }
 .svg-flex-container {
-  width: 1152px;
+  width: 80%;
   height: 750px;
   display: block;
 }

@@ -13,6 +13,8 @@ export class ShapeStore {
     @observable mousePoint: Point3D;
     @observable isShow: IObservableValue<boolean>;
 
+
+
     constructor() {
         this.group = observable(new GroupShape());
         this.mousePoint = new Point3D(0, 0);
@@ -34,6 +36,10 @@ export class ShapeStore {
     }
     @action removeSelected() {
         this.group.children.removeSelected();
+
+    }
+    @action moveProjection() {
+        this.group.children.projection();
 
     }
 

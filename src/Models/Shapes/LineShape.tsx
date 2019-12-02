@@ -6,6 +6,8 @@ import uuidv4 from "../uuid";
 import { IShape } from "../IShape";
 import { ShapeType } from '../ShapeType';
 import LineListView from "../../components/Tools/ListViews/LineListView";
+import { Camera3d } from '../Camera';
+import { Matrix } from '../Matrix';
 
 export class LineShape implements IShape {
     public readonly key: string;
@@ -17,6 +19,7 @@ export class LineShape implements IShape {
         return this.selection.get();
     }
 
+
     constructor(points: Array<Point3D>) {
         this.points = observable(points);
         this.selection = observable.box(false);
@@ -27,6 +30,7 @@ export class LineShape implements IShape {
     }
 
     @action move(...points: Array<Point3D>) {
+
         this.points = points;
     }
 

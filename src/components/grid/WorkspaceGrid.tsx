@@ -1,9 +1,11 @@
 import React from 'react'
-
+import { observer } from 'mobx-react';
 import './WorkspaceGrid.css';
+import { Camera3d } from '../../Models/Camera';
 interface WorkspaceGridProps { width: number, height: number, size: number, gridPattern: boolean };
 
-function WorkspaceGrid({ width, height, size, gridPattern }: WorkspaceGridProps) {
+const WorkspaceGrid = observer(({ width, height, size, gridPattern }: WorkspaceGridProps) => {
+
     return (
         <g>
             {gridPattern && (<><defs>
@@ -13,9 +15,10 @@ function WorkspaceGrid({ width, height, size, gridPattern }: WorkspaceGridProps)
             </defs>
                 <rect width="100%" height="100%" fill="url(#smallGrid)" /></>)}
 
-            <g>
+            <g >
                 <line x1={width / 2} y1={height / 2} x2={width / 2} y2={30} stroke="red" strokeWidth="2"
                     color="red"></line>
+
                 <line x1={width / 2} y1={height / 2} x2={20} y2={height / 2} stroke="red" strokeWidth="2"
                     color="red"></line>
                 <line x1={width / 2} y1={height / 2} x2={width - 20} y2={height / 2} stroke="red"
@@ -24,10 +27,13 @@ function WorkspaceGrid({ width, height, size, gridPattern }: WorkspaceGridProps)
                 <line x1={width / 2} y1={height / 2} x2={width / 2} y2={height - 30} stroke="red"
                     strokeWidth="2"
                     color="red"></line>
+                <line x1={30} y1={height - 30} x2={width - 30} y2={30} stroke="red" strokeWidth="2"
+                    color="red" ></line>
 
                 <text id="Y" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">
                     <tspan x={width / 2 - 5} y={20}>Y</tspan>
                 </text>
+
                 <text id="X" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">
                     <tspan x="0" y={height / 2 + 5}>X</tspan>
                 </text>
@@ -37,9 +43,15 @@ function WorkspaceGrid({ width, height, size, gridPattern }: WorkspaceGridProps)
                 <text id="Y" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">
                     <tspan x={width - 20} y={height / 2 + 5} >X</tspan>
                 </text>
+                <text id="Z" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">
+                    <tspan x={10} y={height - 15}>Z</tspan>
+                </text>
+                <text id="Z" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">
+                    <tspan x={width - 20} y={25}>Z</tspan>
+                </text>
             </g>
         </g>
     )
-}
+});
 
 export default WorkspaceGrid

@@ -9,6 +9,7 @@ export interface IShape {
     ListViewComponent: JSX.Element;
     isFocused: boolean;
     focus: () => void;
+    
 
 
 }

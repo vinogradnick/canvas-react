@@ -1,7 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Point2D from "../../Models/Point3D";
 import Point3D from "../../Models/Point3D";
-
+import { Camera3d } from '../../Models/Camera';
+import { observer } from 'mobx-react';
 
 enum MoveStatus {
     START_MOVE,
@@ -15,7 +16,7 @@ export interface ILineToolProps {
     activate: () => void;
     move: (...points: Point3D[]) => void;
 }
-
+@observer
 class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
     constructor(props: ILineToolProps) {
@@ -39,14 +40,14 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
     public pressMove(e, status: MoveStatus) {
         console.log(this.state);
-        this.setState({moveStatus: status});
+        this.setState({ moveStatus: status });
         document.addEventListener('mousemove', this.move, false);
     }
 
     public upMove(e, status: MoveStatus) {
         console.log('mouse up');
 
-        this.setState({moveStatus: status});
+        this.setState({ moveStatus: status });
         document.removeEventListener('mousemove', this.move, false);
     }
 
@@ -57,7 +58,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
                 case MoveStatus.ALL_MOVE:
                     const [start, end] = this.props.points;
                     const item = new Point2D((start.x + end.x) / 2, (start.y + end.y) / 2);
-                    const center = Point2D.subtraction(item, new Point2D(e.clientX, e.clientY));
+                    const center = Point2D.subtraction(item, new Point2D(e.pageX, e.pageY));
                     this.props.move(start.minus(center), end.minus(center));
                     return;
                 case MoveStatus.START_MOVE:
@@ -76,6 +77,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
         return (
             <>
                 <line
+
                     x1={p1.x}
                     x2={p2.x}
                     y1={p1.y}
@@ -89,6 +91,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                 {this.props.activation && (<>
                     <circle
+
                         onMouseDown={e => this.pressMove(e, MoveStatus.START_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.START_MOVE)}
                         cx={p1.x}
@@ -100,6 +103,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                     />
                     <circle
+
                         onMouseDown={e => this.pressMove(e, MoveStatus.END_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.END_MOVE)}
                         cx={p2.x}

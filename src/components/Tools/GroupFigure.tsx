@@ -1,30 +1,31 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Point3D from "../../Models/Point3D";
-import {GroupShape} from "../../Models/Shapes/GroupShape";
+import { GroupShape } from "../../Models/Shapes/GroupShape";
 import uuidv4 from "../../Models/uuid";
-import {observer} from 'mobx-react';
+import { observer } from 'mobx-react';
+import { Camera3d } from '../../Models/Camera';
 
 @observer
 class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMoving: boolean }> {
     constructor(props) {
         super(props);
-        this.state = {isMoving: false};
+        this.state = { isMoving: false };
         this.startMove = this.startMove.bind(this);
         this.endMove = this.endMove.bind(this);
     }
 
     public startMove(e) {
-        this.setState({isMoving: true});
+        this.setState({ isMoving: true });
 
     }
 
     public endMove(e) {
-        this.setState({isMoving: false});
+        this.setState({ isMoving: false });
 
     }
 
     public render() {
-        const {minX, minY, maxX, maxY} = this.props.group.groupCoord;
+        const { minX, minY, maxX, maxY } = this.props.group.groupCoord;
 
         console.log(this.props.group.groupCoord);
         const move = (e) => {
@@ -35,16 +36,17 @@ class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMo
             }
         }
 
-        const {children, group} = this.props;
+        const { children, group } = this.props;
         return (
             <>
                 {!group.isFocused ? children : (<>
-                        <g key={uuidv4()} style={{pointerEvents: group.isFocused ? 'none' : 'all'}}>
-                            {children}
-                        </g>
-                        {group.isFocused === true &&
+                    <g key={uuidv4()} style={{ pointerEvents: group.isFocused ? 'none' : 'all' }}>
+                        {children}
+                    </g>
+                    {group.isFocused === true &&
                         [
                             <rect
+                                style={{ transform: Camera3d.CameraGet }}
                                 key={uuidv4()}
                                 x={minX}
                                 y={minY}
@@ -63,9 +65,9 @@ class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMo
                                 stroke={'red'}
                                 onMouseDown={this.startMove}
                                 onMouseUp={this.endMove}
-                                onMouseMove={move}/>]
-                        }
-                    </>
+                                onMouseMove={move} />]
+                    }
+                </>
 
                 )}
 

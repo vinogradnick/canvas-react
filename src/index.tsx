@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
+import { Camera, Camera3d } from './Models/Camera';
+window.addEventListener("keypress", (e) => {
+    Camera3d.rotateAsix(e.key);
+})
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
