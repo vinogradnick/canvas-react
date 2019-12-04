@@ -3,7 +3,9 @@ import Point3D from "../../Models/Point3D";
 import { GroupShape } from "../../Models/Shapes/GroupShape";
 import uuidv4 from "../../Models/uuid";
 import { observer } from 'mobx-react';
-import { Camera3d } from '../../Models/Camera';
+import { Camera, camera } from '../../Store/Camera';
+
+
 
 @observer
 class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMoving: boolean }> {
@@ -27,7 +29,7 @@ class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMo
     public render() {
         const { minX, minY, maxX, maxY } = this.props.group.groupCoord;
 
-        console.log(this.props.group.groupCoord);
+
         const move = (e) => {
             if (this.state.isMoving) {
                 const center = new Point3D(e.clientX, e.clientY);
@@ -46,7 +48,7 @@ class GroupFigure extends Component<{ group: GroupShape, children: any }, { isMo
                     {group.isFocused === true &&
                         [
                             <rect
-                                style={{ transform: Camera3d.CameraGet }}
+
                                 key={uuidv4()}
                                 x={minX}
                                 y={minY}

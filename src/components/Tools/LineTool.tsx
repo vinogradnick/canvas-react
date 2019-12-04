@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Point2D from "../../Models/Point3D";
 import Point3D from "../../Models/Point3D";
-import { Camera3d } from '../../Models/Camera';
 import { observer } from 'mobx-react';
 
 enum MoveStatus {
@@ -77,11 +76,10 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
         return (
             <>
                 <line
-
-                    x1={p1.x}
-                    x2={p2.x}
-                    y1={p1.y}
-                    y2={p2.y}
+                    x1={p1.x / (p1.z + 1)}
+                    x2={p2.x / (p2.z + 1)}
+                    y1={p1.y / (p1.z + 1)}
+                    y2={p2.y / (p2.z + 1)}
                     stroke={'red'}
                     onDoubleClick={this.activate}
                     onMouseDown={e => this.pressMove(e, MoveStatus.ALL_MOVE)}
@@ -94,8 +92,8 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.START_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.START_MOVE)}
-                        cx={p1.x}
-                        cy={p1.y}
+                        cx={p1.x / (p1.z + 1)}
+                        cy={p1.y / (p1.z + 1)}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"
@@ -106,8 +104,8 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.END_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.END_MOVE)}
-                        cx={p2.x}
-                        cy={p2.y}
+                        cx={p2.x / (p2.z + 1)}
+                        cy={p2.y / (p2.z + 1)}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"

@@ -1,7 +1,7 @@
 import { observable, action, computed, IObservableValue } from 'mobx';
-import Point3D from './Point3D';
-import { Matrix } from './Matrix';
-import { shapeStore } from '../Store/ShapeStore';
+import Point3D from '../Models/Point3D';
+import { Matrix } from '../Models/Matrix';
+import { ShapeStore, shapeStore } from './ShapeStore';
 
 export interface ICameraPos {
     xAngle: number;
@@ -23,12 +23,25 @@ export class Camera {
         `
     }
 
+    public static CreateCamera(cameraJSON: any) {
+        const camera = new Camera();
+        camera.cameraPosition = observable.box(cameraJSON.cameraPosition);
+        return camera;
+    }
+    @action public Update(camera: Camera) {
+
+        this.cameraPosition = camera.cameraPosition;
+    }
     @computed get rotationMatrix() {
         return Matrix.RotateMatrix(
             this.cameraPosition.get().xAngle,
             this.cameraPosition.get().yAngle,
             this.cameraPosition.get().distance
         )
+    }
+    @action public load(camera: any) {
+        this.cameraPosition = observable.box(camera.cameraPosition);
+
     }
     @action public rotateAsix(rotate: string) {
         console.log(rotate);
@@ -41,7 +54,6 @@ export class Camera {
                     distance: this.cameraPosition.get().distance
                 })
                 shapeStore.moveProjection();
-
                 return;
             case 's':
                 this.cameraPosition.set({
@@ -67,11 +79,12 @@ export class Camera {
                     yAngle: this.cameraPosition.get().yAngle,
                     distance: this.cameraPosition.get().distance
                 })
-                shapeStore.moveProjection();
 
+                shapeStore.moveProjection();
                 return;
 
         }
     }
 }
-export const Camera3d = new Camera();
+
+export let camera = new Camera();

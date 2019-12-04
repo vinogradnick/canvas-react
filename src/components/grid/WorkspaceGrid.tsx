@@ -1,7 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react';
 import './WorkspaceGrid.css';
-import { Camera3d } from '../../Models/Camera';
 interface WorkspaceGridProps { width: number, height: number, size: number, gridPattern: boolean };
 
 const WorkspaceGrid = observer(({ width, height, size, gridPattern }: WorkspaceGridProps) => {

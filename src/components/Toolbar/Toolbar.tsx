@@ -1,30 +1,47 @@
 import React, { Component } from 'react';
 import group from '../../assets/img/group.svg';
-import { shapeStore } from "../../Store/ShapeStore";
+import ToolbarItem from './ToolbarItem/ToolbarItem';
+import uuidv4 from '../../Models/uuid';
+import { RwEngine } from '../../Store/RwEngine';
+import { ShapeStore, shapeStore } from '../../Store/ShapeStore';
+const store = shapeStore;
+const fileItems = [{
+    name: 'Открыть',
+    action: () => console.log('open'),
+},
+{
+    name: 'Сохранить',
+    action: () => RwEngine.jsonSave()
+}
+];
+const figureItems = [{
+    name: 'Создать линию',
+    action: () => store.createLine(),
 
+}, {
+    name: 'Удалить линию',
+    action: () => store.removeSelected(),
+}]
+const groupItems = [{
+    name: 'Сгруппировать',
+    action: () => store.groupFigures()
+},
+{
+    name: 'Разгруппировать',
+    action: () => store.unGroupFigures()
+}
+    , {
+    name: 'Удалить группу',
+    action: () => console.log('open'),
+}]
 class Toolbar extends Component {
     render() {
         return (
             <nav className="nav-container">
-                <div className="tool-item" onClick={e => shapeStore.createLine()}>
-                    Создание линии
-                </div>
-                <div className="tool-item" onClick={e => shapeStore.removeSelected()}>
-                    Удаление линии
-                </div>
-                <div className="tool-item" onClick={e => shapeStore.groupFigures()}>
-
-                    Сгруппировать
-                </div>
-                <div className="tool-item" onClick={e => shapeStore.unGroupFigures()}>
-                    Удалить группу
-                </div>
-                <div className="tool-item" onClick={e => shapeStore.isShow.set(!shapeStore.isShow.get())}>
-                    Отображение Координатной оси
-                </div>
-                <div className="tool-item">
-                    Сменить Render Engine
-                </div>
+                <ToolbarItem itemName="Файл" items={fileItems} uuid={uuidv4()} />
+                <ToolbarItem itemName="Работа с фигурами" items={figureItems} uuid={uuidv4()} />
+                <ToolbarItem itemName="Группировка" items={groupItems} uuid={uuidv4()} />
+                <input type="file" onChange={e => RwEngine.LoadFile(e)} />
             </nav>
         );
     }

@@ -3,9 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Camera, Camera3d } from './Models/Camera';
+import { Camera, camera } from './Store/Camera';
+import { ShapeStore } from './Store/ShapeStore';
+
+
+
+
+
+
 window.addEventListener("keypress", (e) => {
-    Camera3d.rotateAsix(e.key);
+    camera.rotateAsix(e.key);
 })
 ReactDOM.render(<App />, document.getElementById('root'));
 

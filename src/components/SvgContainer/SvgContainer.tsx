@@ -6,7 +6,6 @@ import { ShapeStore } from '../../Store/ShapeStore';
 import Point3D from "../../Models/Point3D";
 import WorkspaceGrid from "../grid/WorkspaceGrid";
 import { PAGE_SIZE } from "../../Models/const";
-import { Camera3d } from '../../Models/Camera';
 
 interface ISvgContainerProps {
     shapeStore?: ShapeStore;

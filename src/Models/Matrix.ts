@@ -1,4 +1,5 @@
 import Point3D from "./Point3D";
+import { PAGE_SIZE } from "./const";
 
 export class Matrix {
 
@@ -12,7 +13,7 @@ export class Matrix {
 
     public static convertToPoints = (arr) =>
         arr.map((matrix, idx) =>
-            new Point3D(Math.abs(arr[idx][0]), Math.abs(arr[idx][1]), Math.abs(arr[idx][2]))
+            new Point3D(arr[idx][0] + PAGE_SIZE.WIDTH / 2, arr[idx][1] + PAGE_SIZE.HEIGHT / 2, Math.abs(arr[idx][2]))
         )
 
     /**
@@ -67,9 +68,9 @@ export class Matrix {
 
 
         return [
-            [Math.cos(xAngle), Math.sin(xAngle) * Math.sin(yAngle), 0, (Math.sin(xAngle) * Math.cos(yAngle)) / persectiveDistance],
-            [0, Math.cos(yAngle), 0, (-1 * Math.sin(yAngle)) / persectiveDistance],
-            [Math.sin(xAngle), -1 * (Math.sin(yAngle) * Math.cos(xAngle)), 0, (-1 * (Math.sin(yAngle) * Math.cos(xAngle))) / persectiveDistance],
+            [Math.cos(xAngle), Math.sin(xAngle) * Math.sin(yAngle), 0, -1 * (Math.sin(xAngle) * Math.cos(yAngle)) / persectiveDistance],
+            [0, -1 * Math.cos(yAngle), 0, (-1 * Math.sin(yAngle)) / persectiveDistance],
+            [Math.sin(xAngle), (Math.sin(yAngle) * Math.cos(xAngle)), 0, (-1 * (Math.sin(yAngle) * Math.cos(xAngle))) / persectiveDistance],
             [0, 0, 0, 1]
         ]
     }

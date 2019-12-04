@@ -6,22 +6,27 @@ import uuidv4 from "../uuid";
 import { IShape } from "../IShape";
 import { ShapeType } from '../ShapeType';
 import LineListView from "../../components/Tools/ListViews/LineListView";
-import { Camera3d } from '../Camera';
 import { Matrix } from '../Matrix';
 
 export class LineShape implements IShape {
     public readonly key: string;
     public readonly type: ShapeType;
-    @observable points: Array<Point3D>;
+    @observable _points: IObservableValue<Array<Point3D>>;
+
     @observable selection: IObservableValue<boolean>;
 
     @computed get isFocused() {
         return this.selection.get();
     }
-
+    public get points() {
+        return this._points.get();
+    }
+    public set setPoints(value: Point3D[]) {
+        this._points.set(value);
+    }
 
     constructor(points: Array<Point3D>) {
-        this.points = observable(points);
+        this._points = observable.box(points);
         this.selection = observable.box(false);
         this.key = uuidv4();
         this.focus = this.focus.bind(this);
@@ -30,8 +35,7 @@ export class LineShape implements IShape {
     }
 
     @action move(...points: Array<Point3D>) {
-
-        this.points = points;
+        this.setPoints = points;
     }
 
     @action focus() {

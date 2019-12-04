@@ -5,8 +5,8 @@ import Point3D from "./Point3D";
 import { PAGE_SIZE } from "./const";
 import { ShapeType } from "./ShapeType";
 import { tsExpressionWithTypeArguments } from "@babel/types";
-import { Camera3d } from "./Camera";
 import { Matrix } from "./Matrix";
+import { Camera, camera } from "../Store/Camera";
 
 export class ShapeCollection {
     @observable collection: Array<IShape>;
@@ -37,10 +37,11 @@ export class ShapeCollection {
     }
     @action projection() {
         return this.collection.forEach(item => {
-            const mtx = Camera3d.rotationMatrix;
+            const mtx = camera.rotationMatrix;
             console.log(mtx);
             const p = Matrix.convertToPoints(Matrix.transform(Matrix.convertToMatrix(...item.points), mtx));
-            item.points = [p[0], p[1]];
+
+            item.move(p[0], p[1]);
         })
     }
 

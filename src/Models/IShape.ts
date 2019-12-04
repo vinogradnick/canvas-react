@@ -9,7 +9,8 @@ export interface IShape {
     ListViewComponent: JSX.Element;
     isFocused: boolean;
     focus: () => void;
-    
+    move: (...points: Point3D[]) => void;
+
 
 
 }

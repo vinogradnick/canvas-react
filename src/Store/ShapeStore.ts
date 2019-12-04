@@ -1,5 +1,5 @@
 import { IShape } from "../Models/IShape";
-import { observable, action, IObservableValue } from 'mobx';
+import { observable, action, IObservableValue, computed, toJS } from 'mobx';
 import { ShapeCollection } from "../Models/ShapeCollection";
 import { GroupShape } from "../Models/Shapes/GroupShape";
 import Point3D from "../Models/Point3D";
@@ -9,16 +9,21 @@ import { PAGE_SIZE } from "../Models/const";
 export const rd = (max: number): number => Math.ceil(Math.random() * max);
 
 export class ShapeStore {
-    @observable group: GroupShape;
+    @observable store: IObservableValue<GroupShape>;
     @observable mousePoint: Point3D;
     @observable isShow: IObservableValue<boolean>;
 
 
 
-    constructor() {
-        this.group = observable(new GroupShape());
+    constructor(group: GroupShape = null) {
+
+        this.store = group !== null ? observable.box(group) : observable.box(new GroupShape());
         this.mousePoint = new Point3D(0, 0);
         this.isShow = observable.box(true);
+
+    }
+    @computed get group() {
+        return this.store.get();
     }
 
     @action moveMouse(point: Point3D) {
@@ -44,6 +49,7 @@ export class ShapeStore {
     }
 
     @action groupFigures() {
+        console.log(toJS(this.group));
         const lines = this.group.children.getSelectLines;
         const group = new GroupShape(null, ...lines);
         if (lines.length > 0) {
@@ -68,10 +74,15 @@ export class ShapeStore {
             this.removeItem(item.key);
 
         });
-
+        this.addItem(...arr);
 
     }
 
+    @action public Update(shapeStore: ShapeStore) {
+
+        this.store = observable.box(shapeStore.group);
+        console.log(toJS(this.group));
+    }
 
     @action createLine() {
         this.addItem(new LineShape([
@@ -79,7 +90,7 @@ export class ShapeStore {
             new Point3D(rd(PAGE_SIZE.WIDTH), rd(PAGE_SIZE.HEIGHT))
         ]))
     }
+
 }
 
-
-export const shapeStore = new ShapeStore();
+export let shapeStore = new ShapeStore();

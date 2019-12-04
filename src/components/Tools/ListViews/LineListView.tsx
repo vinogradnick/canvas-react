@@ -22,7 +22,11 @@ const LineListView = observer(({ line }: { line: LineShape }) =>
         </span>
         <ul>
             {line.points &&
-                line.points.map(item => <PointListView key={uuidv4()} point={item} />)}
+                line.points.map(item =>
+                    <PointListView
+                        line={line}
+                        key={uuidv4()}
+                        point={item} />)}
         </ul>
 
     </ul>

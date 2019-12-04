@@ -1,4 +1,4 @@
 export enum ShapeType {
-    LINE,
-    GROUP
+    LINE = 0,
+    GROUP = 1,
 }

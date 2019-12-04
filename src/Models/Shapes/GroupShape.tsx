@@ -1,12 +1,12 @@
-import {IShape} from "../IShape";
+import { IShape } from "../IShape";
 import React from 'react';
 import uuidv4 from "../uuid";
-import {observable, IObservableValue, computed, action} from 'mobx';
+import { observable, IObservableValue, computed, action } from 'mobx';
 import Point3D from "../Point3D";
-import {PAGE_SIZE} from "../const";
-import {ShapeCollection} from "../ShapeCollection";
-import {ShapeType} from "../ShapeType";
-import {tsExpressionWithTypeArguments} from "@babel/types";
+import { PAGE_SIZE } from "../const";
+import { ShapeCollection } from "../ShapeCollection";
+import { ShapeType } from "../ShapeType";
+import { tsExpressionWithTypeArguments } from "@babel/types";
 import folder from '../../assets/img/folder.svg';
 import GroupTool from "../../components/Tools/ListViews/GroupTool";
 import GroupFigure from "../../components/Tools/GroupFigure";
@@ -43,9 +43,21 @@ export class GroupShape implements IShape {
 
         return this.selection.get();
     }
+    static CreateGroupShape(group: any) {
+        const shapes = group.children.collection;
+        const newArr = [];
+        shapes.forEach(element => {
+            if (element.type === 1) {
+                newArr.push(new GroupShape(null))
+            }
+        });
+        const newGp = new GroupShape(null, ...group.children.collection);
+        newGp.points = [...group.points];
+        return newGp;
+    }
 
     @computed get centerFigure() {
-        const {maxX, minX, maxY, minY, maxZ, minZ} = this.children.maxAndMinPoint;
+        const { maxX, minX, maxY, minY, maxZ, minZ } = this.children.maxAndMinPoint;
         const avX = ((maxX - minX) / 2) + minX;
         const avY = ((maxY - minY) / 2) + minY;
         const avZ = ((maxZ - minY) / 2) + minY;
@@ -108,7 +120,7 @@ export class GroupShape implements IShape {
     }
 
     @computed get ultraCenter() {
-        const {maxX, minX, maxY, minY, maxZ, minZ} = this.centerGroups;
+        const { maxX, minX, maxY, minY, maxZ, minZ } = this.centerGroups;
 
         const avX = ((maxX - minX) / 2) + minX;
         const avY = ((maxY - minY) / 2) + minY;
@@ -120,29 +132,29 @@ export class GroupShape implements IShape {
     @action movePoint = (point: Point3D) =>
         this.points = [point];
 
-    @action move = (point: Point3D) => {
+    @action move = (...points: Point3D[]) => {
 
-        const delta = Point3D.subtraction(this.centerFigure, point);
+        const delta = Point3D.subtraction(this.centerFigure, points[0]);
         for (let i = 0; i < this.children.collection.length; i++) {
             const item = this.children.collection[i];
-            item.points = item.points.map(p => p.minus(delta));
+            item.move(...item.points.map(p => p.minus(delta)));
         }
     }
 
 
     get ListViewComponent() {
-        console.log(this.children);
+
 
         return (
             <GroupTool
                 group={this}
                 key={this.key}
-                focus={this.focus}/>
+                focus={this.focus} />
         )
     }
 
     get Component() {
-        return <GroupFigure key={this.key+'F317'} group={this}>
+        return <GroupFigure key={this.key + 'F317'} group={this}>
             {this.children.collection.map(item => item.Component)}
         </GroupFigure>
     }
