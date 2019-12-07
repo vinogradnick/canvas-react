@@ -15,18 +15,18 @@ const WorkspaceGrid = observer(({ width, height, size, gridPattern }: WorkspaceG
                 <rect width="100%" height="100%" fill="url(#smallGrid)" /></>)}
 
             <g >
-                <line x1={width / 2} y1={height / 2} x2={width / 2} y2={30} stroke="red" strokeWidth="2"
+                <line x1={width / 2} y1={height / 2} x2={width / 2} y2={30} stroke="red" strokeWidth="1"
                     color="red"></line>
 
-                <line x1={width / 2} y1={height / 2} x2={20} y2={height / 2} stroke="red" strokeWidth="2"
+                <line x1={width / 2} y1={height / 2} x2={20} y2={height / 2} stroke="red" strokeWidth="1"
                     color="red"></line>
                 <line x1={width / 2} y1={height / 2} x2={width - 20} y2={height / 2} stroke="red"
-                    strokeWidth="2"
+                    strokeWidth="1"
                     color="red"></line>
                 <line x1={width / 2} y1={height / 2} x2={width / 2} y2={height - 30} stroke="red"
-                    strokeWidth="2"
+                    strokeWidth="1"
                     color="red"></line>
-                <line x1={30} y1={height - 30} x2={width - 30} y2={30} stroke="red" strokeWidth="2"
+                <line x1={30} y1={height - 30} x2={width - 30} y2={30} stroke="red" strokeWidth="1"
                     color="red" ></line>
 
                 <text id="Y" fontFamily="Helvetica" fontSize="18" fontWeight="normal" fill="#000000" className="non-select">

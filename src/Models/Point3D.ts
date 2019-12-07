@@ -1,54 +1,63 @@
-import {IPoint} from "./IPoint";
-import {PAGE_SIZE} from "./const";
+import { PAGE_SIZE } from "./const";
+import { observable, computed, action } from 'mobx';
 
-export default class Point3D implements IPoint<Point3D> {
+export default class Point3D {
 
-    constructor(public x: number, public y: number, public z: number = 0) {
+    constructor(public _x: number, public _y: number, public _z: number = 0, public _w: number = 1) {
 
+    }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
+    get z() {
+        return this._z;
     }
 
 
     get getX() {
-        return this.x - (PAGE_SIZE.WIDTH / 2);
+        return this._x - (PAGE_SIZE.WIDTH / 2);
     }
 
     get getY() {
-        return -1 * (this.y - (PAGE_SIZE.HEIGHT / 2));
+        return -1 * (this._y - (PAGE_SIZE.HEIGHT / 2));
     }
 
     set setY(num: number) {
-        this.y = (num + (PAGE_SIZE.HEIGHT / 2))
+        this._y = (num + (PAGE_SIZE.HEIGHT / 2))
     }
 
     set setX(num: number) {
-        this.x = (num + (PAGE_SIZE.WIDTH / 2));
+        this._x = (num + (PAGE_SIZE.WIDTH / 2));
     }
 
     public static centerPoint = (start: Point3D, end: Point3D) =>
-        new Point3D((start.x + end.x) / 2, (start.y + end.y) / 2)
+        new Point3D((start._x + end._x) / 2, (start._y + end._y) / 2)
 
-    public equal = (point: Point3D) => point.x == point.x && point.y === point.y && this.z === point.z;
-    public lenBetween = (point: Point3D) => Math.sqrt(Math.pow(point.x - this.x, 2) + Math.pow(point.y - this.y, 2))
+    public equal = (point: Point3D) => point._x == point._x && point._y === point._y && this._z === point._z;
+    public lenBetween = (point: Point3D) => Math.sqrt(Math.pow(point._x - this._x, 2) + Math.pow(point._y - this._y, 2))
     public minus = (point: Point3D) => {
-        this.x -= point.x;
-        this.y -= point.y;
+        this._x -= point._x;
+        this._y -= point._y;
         return this;
     }
     public plus = (point: Point3D) => {
-        this.x += point.x;
-        this.y += point.y;
+        this._x += point._x;
+        this._y += point._y;
         return this;
     }
-    public static subtraction = (f: Point3D, s: Point3D) => new Point3D(f.x - s.x, f.y - s.y);
+    public static subtraction = (f: Point3D, s: Point3D) => new Point3D(f._x - s._x, f._y - s._y);
 
     public get stringify() {
-        return `${this.x} ${this.y}`;
+        return `${this._x} ${this._y}`;
     }
 
 
     public static sort(a: Point3D, b: Point3D) {
-        if (a.x > b.x) {
-            if (a.y > b.y) {
+        if (a._x > b._x) {
+            if (a._y > b._y) {
                 return 1;
             } else {
 
@@ -57,15 +66,15 @@ export default class Point3D implements IPoint<Point3D> {
     }
 
     get convert() {
-        return new Point3D(this.x, this.y, 0);
+        return new Point3D(this._x, this._y, 0);
     }
 
     get getZ() {
-        return this.z;
+        return this._z;
     }
 
     set setZ(z: number) {
-        this.z = z;
+        this._z = z;
     }
 
 

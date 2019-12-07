@@ -7,17 +7,28 @@ import { IShape } from "../IShape";
 import { ShapeType } from '../ShapeType';
 import LineListView from "../../components/Tools/ListViews/LineListView";
 import { Matrix } from '../Matrix';
+import { camera } from '../../Store/Camera';
 
 export class LineShape implements IShape {
     public readonly key: string;
     public readonly type: ShapeType;
     @observable _points: IObservableValue<Array<Point3D>>;
 
+
     @observable selection: IObservableValue<boolean>;
 
     @computed get isFocused() {
         return this.selection.get();
     }
+
+    @computed get projectionPoints() {
+        const mtx = camera.rotationMatrix;
+
+        const matrix = Matrix.convertToMatrix(...this.points);
+        return Matrix.convertToPoints(Matrix.multiplyMatrix(matrix, mtx));
+    }
+
+
     public get points() {
         return this._points.get();
     }
@@ -57,7 +68,7 @@ export class LineShape implements IShape {
             key={this.key}
             move={this.move}
             activate={this.focus}
-            points={this.points}
+            points={this.projectionPoints}
             activation={this.selection.get()}
         />
     }
@@ -67,3 +78,15 @@ export class LineShape implements IShape {
     }
 
 }
+/*
+
+camera.isActive.get() === false ? <LineTool
+            key={this.key}
+            move={this.move}
+            activate={this.focus}
+            points={this.points}
+            activation={this.selection.get()}
+        /> :
+
+
+*/

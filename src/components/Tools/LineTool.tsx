@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Point2D from "../../Models/Point3D";
 import Point3D from "../../Models/Point3D";
 import { observer } from 'mobx-react';
+import { camera } from '../../Store/Camera';
 
 enum MoveStatus {
     START_MOVE,
@@ -76,10 +77,11 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
         return (
             <>
                 <line
-                    x1={p1.x / (p1.z + 1)}
-                    x2={p2.x / (p2.z + 1)}
-                    y1={p1.y / (p1.z + 1)}
-                    y2={p2.y / (p2.z + 1)}
+                    style={{ transform: `translateZ(${p2.x})` }}
+                    x1={p1.x}
+                    x2={p2.x}
+                    y1={p1.y}
+                    y2={p2.y}
                     stroke={'red'}
                     onDoubleClick={this.activate}
                     onMouseDown={e => this.pressMove(e, MoveStatus.ALL_MOVE)}
@@ -92,8 +94,8 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.START_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.START_MOVE)}
-                        cx={p1.x / (p1.z + 1)}
-                        cy={p1.y / (p1.z + 1)}
+                        cx={p1.x}
+                        cy={p1.y}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"
@@ -104,8 +106,8 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.END_MOVE)}
                         onMouseUp={e => this.upMove(e, MoveStatus.END_MOVE)}
-                        cx={p2.x / (p2.z + 1)}
-                        cy={p2.y / (p2.z + 1)}
+                        cx={p2.x}
+                        cy={p2.y}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"

@@ -28,9 +28,11 @@ svg {
 .sidebar {
   width: 20%;
   height: 750px;
-  overflow-y: scroll;
 }
-
+.sidebar .sidebar-container {
+  overflow-y: scroll;
+  height: 400px;
+}
 .sidebar .sidebar-container ul {
   list-style: none;
 }
@@ -51,6 +53,11 @@ svg {
   background-color: #2d2121;
   color: snow;
 }
+.slider-bar {
+  color: snow;
+  padding: 10px;
+  width: 90%;
+}
 
 .nav-container .tool-item {
   margin: 20px;
@@ -59,4 +66,7 @@ svg {
 
 .point-text {
   color: snow;
+}
+.gl-container{
+  width: 115;
 }
