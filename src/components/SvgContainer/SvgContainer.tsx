@@ -5,8 +5,8 @@ import { observer, inject } from "mobx-react";
 import { ShapeStore } from '../../Store/ShapeStore';
 import Point3D from "../../Models/Point3D";
 import WorkspaceGrid from "../grid/WorkspaceGrid";
-import { PAGE_SIZE } from "../../Models/const";
-import { camera } from '../../Store/Camera';
+import { PAGE_SIZE, ACTIVE_CSS } from "../../Models/const";
+import { app } from '../../Models/Application';
 
 interface ISvgContainerProps {
     shapeStore?: ShapeStore;
@@ -19,13 +19,16 @@ class SvgContainer extends Component<ISvgContainerProps> {
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 1152 750"
+                viewBox={`0 0 ${PAGE_SIZE.WIDTH} ${PAGE_SIZE.HEIGHT}`}
+                style={{ perspective: `${app.cameraInstance.cameraPosition.get().distance}px` }}
                 onMouseMove={e => {
                     this.props.shapeStore.moveMouse(new Point3D(e.clientX, e.clientY));
-                    camera.isActive.set(false);
-                }}>
-                <g>
-                    {this.props.shapeStore.isShow.get() && <WorkspaceGrid
+
+                }}
+            >
+
+                <g style={{ transformStyle: 'preserve-3d' }}>
+                    {ACTIVE_CSS || this.props.shapeStore.isShow.get() && <WorkspaceGrid
                         width={PAGE_SIZE.WIDTH}
                         height={PAGE_SIZE.HEIGHT}
                         size={16}

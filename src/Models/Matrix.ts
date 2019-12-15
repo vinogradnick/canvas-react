@@ -4,48 +4,24 @@ import { PAGE_SIZE } from "./const";
 export class Matrix {
 
 
-    public static convertToMatrix(...points: Point3D[]): Array<number[]> {
-        const arr: Array<number[]> = [];
-        points.forEach(item => arr.push([item.x, item.y, item.z, 1]));
+    public static convertToMatrix = (...points: Point3D[]): Array<number[]> =>
 
-        return arr;
-    }
+        points.map(item => [item.getX, item.getY, item.getZ, 1]);
+
+
+
 
 
     public static pointNormalize = (...arr: number[]) => {
-        return (arr[0] / arr[1]) + arr[2]
+        return arr[0] / arr[1]
     }
 
     public static convertToPoints = (arr) =>
         arr.map((matrix, idx) =>
-            new Point3D(Matrix.pointNormalize(arr[idx][0], arr[idx][3], 0), Matrix.pointNormalize(arr[idx][1], arr[idx][3], 0), Matrix.pointNormalize(arr[idx][2], arr[idx][3], 0))
+            new Point3D((arr[idx][0] / matrix[3]) + (PAGE_SIZE.WIDTH / 2), -1 * ((arr[idx][1] / matrix[3]) + (PAGE_SIZE.HEIGHT / 2)), arr[idx][2], 1)
         )
 
-    /**
-     * Матрица трансформации
-     * @param m1 
-     * @param m2 
-     */
 
-    public static transform(m1: Array<number[]>, m2: Array<number[]>) {
-
-        const out = [];
-        console.log(m1);
-        console.log(m2);
-        for (let i = 0; i < m1.length; i++) {
-            out.push([0, 0, 0, 0]);
-        }
-        for (let i = 0; i < m1.length; i++) {
-            for (let j = 0; j < m2[0].length; j++) {
-                for (let m = 0; m < m1[0].length; m++) {
-
-                    out[i][j] += m1[i][m] * m2[m][j];
-                }
-            }
-        }
-        console.log(out);
-        return out;
-    }
     public static rad = (x: number) => (x * 180) / Math.PI;
 
 
@@ -84,24 +60,18 @@ export class Matrix {
     }
 
     public static operation = (v1: number, v2: number, t: number) => (v1 * t + v2 * t) / 10;
-    public static GroupMorphing(points: Point3D[], m2: Point3D[]) {
-
-    }
 
     /**
      * @param xAngle Вращение вокруг Y
      * @param yAngle Вращение вокруг X
      * @param persectiveDistance Дальность перспективы
      */
-    public static RotateMatrix = (xAngle, yAngle, persectiveDistance): Array<number[]> => {
-
-
-        return [
-            [Math.cos(xAngle), Math.sin(xAngle) * Math.sin(yAngle), 0, -1 * (Math.sin(xAngle) * Math.cos(yAngle)) / persectiveDistance],
-            [0, Math.cos(yAngle), 0, (-1 * Math.sin(yAngle)) / persectiveDistance],
-            [Math.sin(xAngle), -1 * (Math.sin(yAngle) * Math.cos(xAngle)), 0, (-1 * (Math.sin(yAngle) * Math.cos(xAngle))) / persectiveDistance],
+    public static RotateMatrix = (u, o, persectiveDistance) =>
+        [
+            [Math.cos(u), Math.sin(u) * Math.sin(o), 0, -1 * (Math.sin(u) * Math.cos(o)) / persectiveDistance],
+            [0, Math.cos(o), 0, (-1 * Math.sin(o)) / persectiveDistance],
+            [Math.sin(u), -1 * (Math.sin(o) * Math.cos(u)), 0, (-1 * (Math.cos(o) * Math.cos(u))) / persectiveDistance],
             [0, 0, 0, 1]
         ]
-    }
 
 }

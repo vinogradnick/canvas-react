@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Point2D from "../../Models/Point3D";
 import Point3D from "../../Models/Point3D";
 import { observer } from 'mobx-react';
-import { camera } from '../../Store/Camera';
+import { CANVAS_OFFSET } from '../../Models/const';
+import { app } from '../../Models/Application';
 
-enum MoveStatus {
+export enum MoveStatus {
     START_MOVE,
     END_MOVE,
     ALL_MOVE
@@ -42,6 +42,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
         console.log(this.state);
         this.setState({ moveStatus: status });
         document.addEventListener('mousemove', this.move, false);
+        document.addEventListener('mouseup', e => this.upMove(e, status), false);
     }
 
     public upMove(e, status: MoveStatus) {
@@ -57,15 +58,15 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
             switch (this.state.moveStatus) {
                 case MoveStatus.ALL_MOVE:
                     const [start, end] = this.props.points;
-                    const item = new Point2D((start.x + end.x) / 2, (start.y + end.y) / 2);
-                    const center = Point2D.subtraction(item, new Point2D(e.pageX, e.pageY));
+                    const item = new Point3D((start.x + end.x) / 2, (start.y + end.y) / 2);
+                    const center = Point3D.subtraction(item, new Point3D(e.clientX - CANVAS_OFFSET.LEFT, e.clientY - CANVAS_OFFSET.TOP));
                     this.props.move(start.minus(center), end.minus(center));
                     return;
                 case MoveStatus.START_MOVE:
-                    this.props.move(new Point2D(e.clientX, e.clientY), this.props.points[1]);
+                    this.props.move(new Point3D(e.clientX - CANVAS_OFFSET.LEFT, e.clientY - CANVAS_OFFSET.TOP), this.props.points[1]);
                     return;
                 case MoveStatus.END_MOVE:
-                    this.props.move(this.props.points[0], new Point2D(e.clientX, e.clientY));
+                    this.props.move(this.props.points[0], new Point3D(e.clientX - CANVAS_OFFSET.LEFT, e.clientY - CANVAS_OFFSET.TOP));
                     return;
 
             }
@@ -75,47 +76,44 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
     render() {
         const [p1, p2] = this.props.points;
         return (
-            <>
+            <g style={{ position: 'absolute', transform: app.cameraInstance.CameraGet }}>
                 <line
-                    style={{ transform: `translateZ(${p2.x})` }}
+
                     x1={p1.x}
                     x2={p2.x}
                     y1={p1.y}
                     y2={p2.y}
-                    stroke={'red'}
+                    stroke={'darkblue'}
                     onDoubleClick={this.activate}
                     onMouseDown={e => this.pressMove(e, MoveStatus.ALL_MOVE)}
-                    onMouseUp={e => this.upMove(e, MoveStatus.ALL_MOVE)}
-                    strokeWidth={this.props.activation ? 5 : 1}
+                    strokeWidth={this.props.activation ? 3 : 1}
                 />
 
                 {this.props.activation && (<>
                     <circle
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.START_MOVE)}
-                        onMouseUp={e => this.upMove(e, MoveStatus.START_MOVE)}
                         cx={p1.x}
                         cy={p1.y}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"
-                        r={8}
+                        r={5}
 
                     />
                     <circle
 
                         onMouseDown={e => this.pressMove(e, MoveStatus.END_MOVE)}
-                        onMouseUp={e => this.upMove(e, MoveStatus.END_MOVE)}
                         cx={p2.x}
                         cy={p2.y}
                         stroke={'black'}
                         strokeWidth={1}
                         fill="white"
-                        r={8}
+                        r={5}
                     />
                 </>)}
 
-            </>
+            </g>
         )
             ;
     }

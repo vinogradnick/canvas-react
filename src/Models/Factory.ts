@@ -14,7 +14,7 @@ export class FigureFactory {
         new LineShape(FigureFactory.createPoints(shape));
     public static createPoints = (arrayJsonPoints: any) => {
         console.log(arrayJsonPoints);
-        return arrayJsonPoints.map(item => new Point3D(item.x, item.y, item.z))
+        return arrayJsonPoints.map(item => new Point3D(item._x, item._y, item._z))
     }
     public static CreateGroupShape = (jsonGroup: any): GroupShape => {
 

@@ -1,19 +1,19 @@
 import { IShape } from "./IShape";
 import { observable, action, computed } from 'mobx';
-import { LineShape } from "./Shapes/LineShape";
-import Point3D from "./Point3D";
+
 import { PAGE_SIZE } from "./const";
 import { ShapeType } from "./ShapeType";
-import { tsExpressionWithTypeArguments } from "@babel/types";
 import { Matrix } from "./Matrix";
-import { Camera, camera } from "../Store/Camera";
-import { K_VIEW, FOV_VIEW } from "../Store/consts";
+import { app } from "./Application";
 
 export class ShapeCollection {
     @observable collection: Array<IShape>;
 
     constructor(shapes: Array<IShape> = []) {
         this.collection = observable(shapes);
+    }
+    @computed get getCircles() {
+        return this.collection.filter(item => item.type == ShapeType.CIRCLE);
     }
 
     @action public addItem = (...shapes: IShape[]) =>
@@ -39,7 +39,7 @@ export class ShapeCollection {
     @action projection() {
         return this.collection.forEach(item => {
             const oldP = [...item.points];
-            const mtx = camera.rotationMatrix;
+            const mtx = app.cameraInstance.rotationMatrix;
             console.log(mtx);
             const matrix = Matrix.convertToMatrix(...item.points);
             const p = Matrix.convertToPoints(Matrix.multiplyMatrix(matrix, mtx));
@@ -72,7 +72,6 @@ export class ShapeCollection {
     public focus(key: string) {
         const item = this.findItem(key);
         item.focus();
-
     }
 
     @computed get maxAndMinPoint() {

@@ -1,7 +1,7 @@
 import { observable, action, computed, IObservableValue } from 'mobx';
 import Point3D from '../Models/Point3D';
 import { Matrix } from '../Models/Matrix';
-import { ShapeStore, shapeStore } from './ShapeStore';
+import { PAGE_SIZE, ACTIVE_CSS } from '../Models/const';
 
 export interface ICameraPos {
     xAngle: number;
@@ -12,20 +12,40 @@ export interface ICameraPos {
 export class Camera {
     @observable cameraPosition: IObservableValue<ICameraPos>;
     @observable isActive: IObservableValue<boolean>;
+    @observable point: IObservableValue<Point3D>;
 
     constructor() {
-        const pos: ICameraPos = { xAngle: 0, yAngle: 0, distance: 2000 };
+        const pos: ICameraPos = { xAngle: 0, yAngle: 0, distance: 11 };
         this.cameraPosition = observable.box(pos);
         this.isActive = observable.box(false);
+        this.point = observable.box(new Point3D(0, 0, 0))
+
+    }
+    get cameraFovTop() {
+        return (PAGE_SIZE.WIDTH / 2) / Matrix.rad(35);
+    }
+    get cameraFovLeft() {
+        return (PAGE_SIZE.HEIGHT / 2) / Matrix.rad(35);
+    }
+    @computed get xPosition() {
+        return this.point.get().x;
+
+    }
+    @computed get yPosition() {
+        return this.point.get().y;
+
+    }
+    @computed get zPosition() {
+        return this.point.get().z;
 
     }
     @computed get active() {
-        return this.active.get();
+        return this.isActive.get();
     }
     @computed get CameraGet() {
-        return `${this.cameraPosition.get().xAngle == 0 ? '' : `rotateX(${this.cameraPosition.get().xAngle}deg)`} 
-        ${this.cameraPosition.get().yAngle == 0 ? '' : `rotateZ(${this.cameraPosition.get().yAngle}deg)`}
-        `
+        return ACTIVE_CSS ? `${this.cameraPosition.get().xAngle == 0 ? '' : `rotateX(${this.cameraPosition.get().xAngle}deg)`} 
+                    ${this.cameraPosition.get().yAngle == 0 ? '' : `rotateZ(${this.cameraPosition.get().yAngle}deg)`} `
+            : "";
     }
     @computed get xAngle() {
         return Matrix.rad(this.cameraPosition.get().xAngle);
@@ -66,10 +86,7 @@ export class Camera {
         camera.cameraPosition = observable.box(cameraJSON.cameraPosition);
         return camera;
     }
-    @action public Update(camera: Camera) {
 
-        this.cameraPosition = camera.cameraPosition;
-    }
     @computed get rotationMatrix() {
         return Matrix.RotateMatrix(
             this.xAngle,
@@ -79,52 +96,11 @@ export class Camera {
     }
     @action public load(camera: any) {
         this.cameraPosition = observable.box(camera.cameraPosition);
-
     }
-    @action public rotateAsix(rotate: string) {
-        console.log(rotate);
 
-        switch (rotate) {
-            case 'w':
-
-                this.cameraPosition.set({
-                    xAngle: this.cameraPosition.get().xAngle,
-                    yAngle: this.cameraPosition.get().yAngle + 5,
-                    distance: this.cameraPosition.get().distance
-                })
-                //shapeStore.moveProjection();
-
-                return;
-            case 's':
-                this.cameraPosition.set({
-                    xAngle: this.cameraPosition.get().xAngle,
-                    yAngle: this.cameraPosition.get().yAngle - 5,
-                    distance: this.cameraPosition.get().distance
-                })
-                // shapeStore.moveProjection();
-
-                return;
-            case "a":
-                this.cameraPosition.set({
-                    xAngle: this.cameraPosition.get().xAngle - 5,
-                    yAngle: this.cameraPosition.get().yAngle,
-                    distance: this.cameraPosition.get().distance
-                })
-                // shapeStore.moveProjection();
-
-                return;
-            case 'd':
-                this.cameraPosition.set({
-                    xAngle: this.cameraPosition.get().xAngle + 5,
-                    yAngle: this.cameraPosition.get().yAngle,
-                    distance: this.cameraPosition.get().distance
-                })
-
-                //shapeStore.moveProjection();
-                return;
-
-        }
+    @action Update(camera: any) {
+        this.cameraPosition = observable.box(camera.cameraPosition)
     }
 }
 
-export let camera = new Camera();
+export type $Camera = { camera: Camera };

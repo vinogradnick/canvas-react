@@ -10,6 +10,9 @@ import { tsExpressionWithTypeArguments } from "@babel/types";
 import folder from '../../assets/img/folder.svg';
 import GroupTool from "../../components/Tools/ListViews/GroupTool";
 import GroupFigure from "../../components/Tools/GroupFigure";
+import { Matrix } from "../Matrix";
+import { app } from "../Application";
+import { LineShape } from "./LineShape";
 
 
 //smirnndaya@gmail.com
@@ -28,6 +31,9 @@ export class GroupShape implements IShape {
     @observable selection: IObservableValue<boolean>;
     public key: string;
     public type: ShapeType;
+    public rotateAngle: number;
+    public scaleFactor: number;
+    public matrix4d: number[][] = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
 
     constructor(parent: GroupShape = null, ...shapes: IShape[]) {
 
@@ -37,6 +43,29 @@ export class GroupShape implements IShape {
         this.points = [new Point3D(0, 0)];
         this.type = ShapeType.GROUP;
         this.focus = this.focus.bind(this);
+    }
+
+    @action applyMatrix() {
+
+        for (let i = 0; i < this.children.collection.length; i++) {
+            const item = this.children.collection[i] as LineShape;
+            item._points.set(item.points.map(item => this.mulPoint([item.matrix])));
+        }
+        /*
+          const arr = [this.matrix];
+        const mtx = app.cameraInstance.rotationMatrix;
+        let res = Matrix.multiplyMatrix(arr, mtx);
+
+
+
+        res = [...res[0]]
+        console.log(res);
+        */
+    }
+    private mulPoint(p: number[][]) {
+        const res = [...Matrix.multiplyMatrix(p, this.matrix4d)[0]];
+
+        return new Point3D((res[0] / res[3]) + PAGE_SIZE.WIDTH / 2, (res[1] / res[3]) + PAGE_SIZE.HEIGHT / 2, 0);
     }
 
     @computed get isFocused() {
@@ -55,6 +84,7 @@ export class GroupShape implements IShape {
         newGp.points = [...group.points];
         return newGp;
     }
+
 
     @computed get centerFigure() {
         const { maxX, minX, maxY, minY, maxZ, minZ } = this.children.maxAndMinPoint;
@@ -163,6 +193,13 @@ export class GroupShape implements IShape {
     @action public focus = () => {
         this.selection.set(!this.selection.get());
         console.log('focus');
+    }
+
+
+    get ActionComponent() {
+        return <>
+
+        </>
     }
 
 

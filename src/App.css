@@ -1,18 +1,21 @@
 body {
   background-color: black;
 }
-
 svg {
-  width: 1152px;
+  width: 1000px;
   height: 750px;
-  display: block;
-  transform-style: preserve-3d;
-  background-color: white;
+  top: 30px;
+  left: 213px;
+  position: absolute;
+  background-color: lightgray;
 }
 .svg-flex-container {
-  width: 80%;
+  width: 1000px;
   height: 750px;
-  display: block;
+  top: 30px;
+  left: 213px;
+  position: absolute;
+  background-color: lightgray;
 }
 
 .nav-container {
@@ -67,6 +70,59 @@ svg {
 .point-text {
   color: snow;
 }
-.gl-container{
+.gl-container {
   width: 115;
+}
+.left-bar {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  width: 212.5px;
+  height: 750px;
+  background-color: snow;
+  overflow-y: scroll;
+  overflow-x: unset;
+}
+.left-bar-name-group {
+  font-size: 12px;
+}
+
+.left-bar-list {
+  padding-left: 10px;
+  list-style: none;
+}
+
+.right-bar {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 226.5px;
+  height: 750px;
+  background-color: snow;
+}
+.mouse-point {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: snow;
+}
+.camera-view {
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+  width: 150px;
+}
+.right-bar-group {
+  padding: 10px;
+}
+.matrix {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+.matrix .mtx-line {
+  display: inline-flex;
+}
+.matrix .mtx-line input {
+  width: 39px;
 }

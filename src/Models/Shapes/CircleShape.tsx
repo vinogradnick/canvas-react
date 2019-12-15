@@ -9,13 +9,12 @@ import LineListView from "../../components/Tools/ListViews/LineListView";
 import { Matrix } from '../Matrix';
 import { app } from '../Application';
 import { ACTIVE_CSS } from '../const';
-import * as THREE from 'three';
+import CircleTool from '../../components/Tools/CircleTool';
 
-export class LineShape implements IShape {
+export class CircleShape implements IShape {
     public readonly key: string;
     public readonly type: ShapeType;
     @observable _points: IObservableValue<Array<Point3D>>;
-
 
     @observable selection: IObservableValue<boolean>;
 
@@ -41,10 +40,11 @@ export class LineShape implements IShape {
         this.key = uuidv4();
         this.focus = this.focus.bind(this);
         this.move = this.move.bind(this);
-        this.type = ShapeType.LINE;
+        this.type = ShapeType.CIRCLE;
     }
 
     @action move(...points: Array<Point3D>) {
+        console.log(points);
         this.setPoints = points;
     }
 
@@ -56,15 +56,12 @@ export class LineShape implements IShape {
     }
 
     @computed get formula() {
-        const [start, end] = this.points;
-        const xCo = start.getY - end.getY;
-        const yCo = end.getX - start.getX;
-        const xyCo = start.getX * end.getY - end.getX * start.getY;
-        return ` F(x): ${xCo}x ${yCo < 0 ? yCo : '+' + yCo}y${xyCo < 0 ? `${xyCo}` : ` + ${xyCo}`} = 0        `
+
+        return ` F(x): x^2+y^2=10`;
     }
 
     @computed get Component() {
-        return <LineTool
+        return <CircleTool
             key={this.key}
             move={this.move}
             activate={this.focus}
@@ -74,32 +71,9 @@ export class LineShape implements IShape {
     }
 
     get ListViewComponent() {
-        return <LineListView line={this} key={this.key} />
-    }
-    @computed get Line3() {
-        var curve = new THREE.CatmullRomCurve3(this.points.map(item => new THREE.Vector3(item.getX, item.getY, item.z)));
-        var points = curve.getPoints(50);
+        return <div>
 
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-        var curveObject = new THREE.Line(geometry, material);
-        curveObject.uuid = this.key;
-        curveObject.castShadow = true;
-        curveObject.receiveShadow = true;
-        return curveObject;
+        </div>
     }
 
 }
-/*
-
-camera.isActive.get() === false ? <LineTool
-            key={this.key}
-            move={this.move}
-            activate={this.focus}
-            points={this.points}
-            activation={this.selection.get()}
-        /> :
-
-
-*/

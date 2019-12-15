@@ -4,32 +4,139 @@ import { LineShape } from '../../../Models/Shapes/LineShape';
 import PointListView from "./PointListView";
 import uuidv4 from "../../../Models/uuid";
 import { observer } from 'mobx-react';
+import flex from "../../../assets/img/icon.svg";
+import arrow from '../../../assets/img/drop-down-arrow.svg'
+import TextField from '@material-ui/core/TextField';
+import Point3D from '../../../Models/Point3D';
+import {
+    fade,
+    ThemeProvider,
+    withStyles,
+    makeStyles,
+    createMuiTheme,
+} from '@material-ui/core/styles';
+const usestl = makeStyles({
+    flex: {
+
+
+    },
+});
+
 interface ILineListViewProps {
     line: LineShape;
 }
-const LineListView = observer(({ line }: { line: LineShape }) =>
-    <ul>
-        <span className="group-header"
-            style={{
-                backgroundColor: line.isFocused ? 'rgb(106, 86, 119)' : '',
+const LineListView = observer(({ line }: { line: LineShape }) => {
+    //@ts-ignore
+    const stl = usestl();
+    const [active, setActive] = React.useState(false);
 
-            }}
-            onClick={e => line.focus()}
-        >
-            <div className="group-header-item">
-                {line.formula}
-            </div>
-        </span>
-        <ul>
-            {line.points &&
-                line.points.map(item =>
-                    <PointListView
-                        line={line}
-                        key={uuidv4()}
-                        point={item} />)}
-        </ul>
+    return (
+        <li>
+            <img src={arrow} width="16" onClick={e => setActive(!active)} alt="" style={{ transform: active ? 'rotateZ(180deg)' : '' }} />
 
-    </ul>
+            <span className="left-bar-name-group" onClick={e => line.focus()}
+                style={{ fontWeight: line.isFocused ? "bold" : "normal" }}>
+                <img src={flex} width="16" alt="" />  f: {line.formula}
+            </span>
+            {active && (
+                <ul className="left-bar-list">
+
+                    <li className="left-bar-name-group">
+                        Начало
+                    <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            id="outlined-number"
+                            label="X"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+                            value={line.points[0]._x}
+                            onChange={(e) => line.move(new Point3D(Number(e.target.value), line.points[0]._y, line.points[0]._z), line.points[1])}
+                        />
+                        <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            id="outlined-number"
+                            label="Y"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+                            value={line.points[0]._y}
+                            onChange={(e) => line.move(new Point3D(line.points[0]._x, Number(e.target.value), line.points[0]._z), line.points[1])}
+                        />
+                        <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            label="Z"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+
+                            value={line.points[0]._z}
+                            onChange={(e) => line.move(new Point3D(line.points[0]._x, line.points[0]._y, Number(e.target.value)), line.points[1])}
+                        />
+
+                    </li>
+                    <li className="left-bar-name-group">
+                        Конец
+                    <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            id="outlined-number"
+                            label="X"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+                            value={line.points[1]._x}
+                            onChange={(e) => line.move(line.points[0], new Point3D(Number(e.target.value), line.points[1]._y, line.points[1]._z))}
+                        />
+                        <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            id="outlined-number"
+                            label="Y"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+                            value={line.points[1]._y}
+                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1]._x, Number(e.target.value), line.points[1]._z))}
+                        />
+                        <TextField
+                            className={stl.flex}
+                            key={uuidv4()}
+                            label="Z"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+
+
+                            value={line.points[1]._z}
+                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1]._x, line.points[1]._y, Number(e.target.value)))}
+                        />
+
+                    </li>
+
+                </ul>
+            )}
+        </li>
+
+
+    )
+}
+
+
 )
 
 
