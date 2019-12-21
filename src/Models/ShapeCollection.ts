@@ -1,17 +1,20 @@
-import { IShape } from "./IShape";
-import { observable, action, computed } from 'mobx';
+import {IShape} from "./IShape";
+import {observable, action, computed, IObservableArray} from 'mobx';
 
-import { PAGE_SIZE } from "./const";
-import { ShapeType } from "./ShapeType";
-import { Matrix } from "./Matrix";
-import { app } from "./Application";
+import {LOCAL} from "./const";
+import {ShapeType} from "./ShapeType";
+import {Matrix} from "./Matrix";
+import {app} from "./Application";
+import {LineShape} from "./Shapes/LineShape";
+import {GroupShape} from "./Shapes/GroupShape";
 
 export class ShapeCollection {
-    @observable collection: Array<IShape>;
+    @observable collection: IObservableArray<IShape>;
 
     constructor(shapes: Array<IShape> = []) {
         this.collection = observable(shapes);
     }
+
     @computed get getCircles() {
         return this.collection.filter(item => item.type == ShapeType.CIRCLE);
     }
@@ -20,11 +23,11 @@ export class ShapeCollection {
         this.collection.push(...shapes);
 
     @computed get getGroupList() {
-        return this.collection.filter(item => item.type === ShapeType.GROUP);
+        return observable(this.collection.filter(item => item.type === ShapeType.GROUP) as Array<GroupShape>)
     }
 
     @computed get getLineList() {
-        return this.collection.filter(item => item.type === ShapeType.LINE);
+        return observable(this.collection.filter(item => item.type === ShapeType.LINE) as LineShape[]);
 
     }
 
@@ -36,6 +39,7 @@ export class ShapeCollection {
         return this.collection.filter(item => item.type === ShapeType.GROUP && item.isFocused);
 
     }
+
     @action projection() {
         return this.collection.forEach(item => {
             const oldP = [...item.points];
@@ -48,6 +52,7 @@ export class ShapeCollection {
             //item.move(...oldP.map(this.pointProjection));
         })
     }
+
     // @action pointProjection(p: Point3D) {
     //     const cameraView = camera.cameraPosition.get();
     //     const x = p.x * Math.cos(cameraView.xAngle) * p.z * Math.sin(cameraView.xAngle);
@@ -63,10 +68,10 @@ export class ShapeCollection {
     // }
 
     @action public removeItem = (key: string) =>
-        this.collection = this.collection.filter(item => item.key !== key);
+        this.collection = observable(this.collection.filter(item => item.key !== key));
 
     @action removeSelected = () =>
-        this.collection = this.collection.filter(item => !item.isFocused);
+        this.collection = observable(this.collection.filter(item => !item.isFocused));
 
     @action
     public focus(key: string) {
@@ -80,9 +85,9 @@ export class ShapeCollection {
         for (let i = 0; i < min.length; i++) {
             arrShapes.push(...min[i]);
         }
-        let minX = PAGE_SIZE.WIDTH;
-        let minY = PAGE_SIZE.HEIGHT;
-        let minZ = PAGE_SIZE.HEIGHT;
+        let minX = LOCAL.getWidth;
+        let minY = LOCAL.getHEIGHT;
+        let minZ = LOCAL.getHEIGHT;
         let maxX = 0;
         let maxY = 0;
         let maxZ = 0;
@@ -105,7 +110,7 @@ export class ShapeCollection {
             if (arrShapes[j].maxZ < maxZ)
                 maxZ = arrShapes[j].z;
         }
-        return { minX, minY, maxX, maxY, maxZ, minZ };
+        return {minX, minY, maxX, maxY, maxZ, minZ};
 
     }
 

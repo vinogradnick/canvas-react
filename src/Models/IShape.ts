@@ -10,6 +10,8 @@ export interface IShape {
     isFocused: boolean;
     focus: () => void;
     move: (...points: Point3D[]) => void;
+    ReactiveComponent: JSX.Element;
+    draw: (ctx: CanvasRenderingContext2D) => void;
 
 
 

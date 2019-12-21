@@ -4,92 +4,117 @@ import { ShapeCollection } from "../Models/ShapeCollection";
 import { GroupShape } from "../Models/Shapes/GroupShape";
 import Point3D from "../Models/Point3D";
 import { LineShape } from "../Models/Shapes/LineShape";
-import { PAGE_SIZE } from "../Models/const";
+import { LOCAL } from "../Models/const";
 import { Morph } from "./Morph";
-import { Bis, Height } from '../Models/Shapes/Bis';
+import { Height, pBis, Bis } from '../Models/Bis';
 import { ShapeType } from "../Models/ShapeType";
+
+/**
+ * Генерация рандомных чисел
+ * @param max
+ */
 export const rd = (max: number): number => Math.ceil(Math.random() * max);
+
+/**
+ * Хранилище объектов Store
+ */
 export class ShapeStore {
+    /**
+     * Корневая группа
+     */
     @observable store: IObservableValue<GroupShape>;
     @observable mousePoint: Point3D;
     @observable isShow: IObservableValue<boolean>;
     @observable morphDialog: IObservableValue<boolean>;
-
+    public level: number;
+    public activeGroupList: [] = [];
 
     constructor(group: GroupShape = null) {
 
-        this.store = group !== null ? observable.box(group) : observable.box(new GroupShape());
+        this.store = group !== null ? observable.box(group) : observable.box(new GroupShape(0));
         this.mousePoint = new Point3D(0, 0);
         this.isShow = observable.box(true);
         this.morphDialog = observable.box(false);
 
 
     }
+
     @action morphing() {
-        const f = <GroupShape>this.store.get().children.getSelectedGroupes[0];
-        const s = <GroupShape>this.store.get().children.getSelectedGroupes[1];
+        const f = this.store.get().children.getSelectedGroupes[0] as GroupShape;
+        const s = this.store.get().children.getSelectedGroupes[1] as GroupShape;
         const m = new Morph(f, s);
         console.log(m.morph());
         this.addItem(...m.morph());
     }
+
     @action setMorphDialog(v: boolean) {
-        console.log(v);
+
         this.morphDialog.set(v);
     }
+
     @computed get getActiveGroupShape() {
         return <GroupShape>(this.store.get().children.getSelectedGroupes[0]);
     }
+
     @computed get group() {
         return this.store.get();
     }
 
     @action moveMouse(point: Point3D) {
-        console.log('flex');
         this.mousePoint = point;
     }
-    @computed get list(): THREE.Line[] {
 
-        const item = this.group.children.collection
-            .filter(item => item.type == ShapeType.GROUP)
-            .map((item: GroupShape) =>
-                item.children.collection
-                    .map((item: LineShape) => item.Line3)
-            );
-        console.log(item);
-        const data = [];
-        item.forEach(item => data.push(...item))
 
-        return ([
-            ...this.group.children.collection
-                .filter(item => item.type == ShapeType.LINE)
-                .map((item: LineShape) => item.Line3),
-            ...data
-        ]);
+    @action addItem = (...shapes: IShape[]) => {
+        if (this.group.isFocused) {
+            this.group.children.addItem(...shapes);
+        }
+        else
+            this.findActiveGroup(this.group, ...shapes);
+
     }
-    @action addItem = (...shapes: IShape[]) =>
-        this.group.children.addItem(...shapes);
+
 
 
     @action removeItem(key: string) {
         this.group.children.removeItem(key);
 
     }
+
     @action removeSelected() {
         this.group.children.removeSelected();
 
     }
+
     @action moveProjection() {
         this.group.children.projection();
 
     }
 
     @action bis() {
-        this.group.children.getSelectLines.forEach(line => {
-            const circle = this.group.children.getCircles[0];
-            this.addItem(new LineShape([...circle.points, Bis(...circle.points, ...line.points)]))
-        });
+        const lines = this.group.children.getSelectLines as LineShape[];
+        if (lines.length > 0) {
+            const [l1, l2] = lines;
+            const rp = pBis(l1, l2);
+
+            // const u1 = { a: l1.A * l2.ABsqrt, b: l1.B * l2.ABsqrt, c: l1.C / l2.ABsqrt };
+            // const u2 = { a: l2.A * l1.ABsqrt, b: l2.B * l1.ABsqrt, c: l2.C * l1.ABsqrt };
+            // const u3 = { a: u1.a - u2.a, b: u1.b - u2.b, c: u1.c - u2.c };
+            // const u4 = { a: u2.a - u1.a, b: u2.b - u1.b, c: u2.c - u1.c }
+            // const f = new Function('x', `return ((${u3.a / u3.b}*x)+${u3.c / u3.b})`);
+            // const f2 = new Function('x', `return ((${u4.a / u4.b}*x)+${u4.c / u4.b})`);
+
+            // const p = new Point3D(LOCAL.CENTER_WIDTH, f(LOCAL.CENTER_HEIGHT));
+            // const s = new Point3D(LOCAL.CENTER_WIDTH, f2(LOCAL.CENTER_HEIGHT));
+
+            this.addItem(new LineShape([rp, Bis(rp, l1.points[1], l2.points[1])]))
+            this.addItem(new LineShape([rp, Bis(rp, l1.points[0], l2.points[0])]))
+            this.addItem(new LineShape([rp, Bis(rp, l1.points[0], l2.points[1])]))
+            this.addItem(new LineShape([rp, Bis(rp, l1.points[1], l2.points[0])]))
+        }
 
     }
+
     @action median() {
         this.group.children.getSelectLines.forEach(line => {
             const circle = this.group.children.getCircles[0];
@@ -100,6 +125,7 @@ export class ShapeStore {
         );
 
     }
+
     @action height() {
         this.group.children.getSelectLines.forEach(line => {
             const circle = this.group.children.getCircles[0];
@@ -111,43 +137,84 @@ export class ShapeStore {
 
     @action groupFigures() {
 
-        const lines = this.group.children.getSelectLines;
-        const group = new GroupShape(null, ...lines);
-        if (lines.length > 0) {
-            lines.forEach(item => {
+        const lines = this.group.children.collection.filter(item => item.isFocused);
+        const groups = this.group.children.getSelectedGroupes;
+        groups.forEach((item: GroupShape) => item.level += 1)
+        const group = new GroupShape(1, ...lines);
+        this.group.children.addItem(group);
+        lines.forEach(item => this.group.children.removeItem(item.key));
 
-                this.group.children.removeItem(item.key)
-            });
+    }
+    @action unGroupFigures() {
+        const groupList = this.group.children.getSelectedGroupes;
 
-            this.group.children.addItem(group);
-            group.focus();
+    }
+
+
+    @action unGroup(group: GroupShape, level: number) {
+        const list = group.children.getSelectedGroupes;
+        if (list.length > 0) {
+            this.addItem()
+        }
+    }
+
+    @action recursiveDraw(context: CanvasRenderingContext2D) {
+        this.group.children.collection.forEach(item => item.draw(context));
+    }
+
+
+
+    @action findActiveGroup(group: GroupShape, ...shapes: IShape[]) {
+        const groups = group.children.collection.filter(item => item.type === ShapeType.GROUP);
+        if (groups.length > 0) {
+            groups.forEach((item: GroupShape) => {
+                if (item.isFocused) {
+                    const groups = shapes.filter(data => data.type === ShapeType.GROUP);
+                    groups.forEach((group: GroupShape) => group.level = item.level + 1)
+                    item.children.addItem(...shapes);
+                }
+                else {
+                    this.findActiveGroup(item, ...shapes);
+                }
+            })
+        }
+        else {
+            group.children.addItem(...shapes);
         }
 
+    }
+
+
+    @action removeGroup(group: GroupShape, prev: GroupShape) {
+        const groups = group.children.collection.filter(item => item.type === ShapeType.GROUP);
+        if (groups.length > 0) {
+            groups.forEach((item: GroupShape) => {
+
+                if (item.isFocused) {
+                    //item.children.removeItem();
+
+                }
+
+            })
+        }
+        else {
+
+        }
 
     }
 
-    @action unGroupFigures() {
-        const groupes = this.group.children.getSelectedGroupes;
 
-        const arr = [];
-        groupes.forEach((item: GroupShape) => {
-            arr.push(...item.children.collection);
-            this.removeItem(item.key);
 
-        });
-        this.addItem(...arr);
-
-    }
-
-    @action public Update(shapeStore: ShapeStore) {
+    @action
+    public Update(shapeStore: ShapeStore) {
         this.store = observable.box(shapeStore.group);
         console.log(toJS(this.group));
     }
 
     @action createLine() {
         this.addItem(new LineShape([
-            new Point3D(rd(PAGE_SIZE.WIDTH), rd(PAGE_SIZE.HEIGHT)),
-            new Point3D(rd(PAGE_SIZE.WIDTH), rd(PAGE_SIZE.HEIGHT))
+            new Point3D(rd(LOCAL.getWidth), rd(LOCAL.getHEIGHT)),
+            new Point3D(rd(LOCAL.getWidth), rd(LOCAL.getHEIGHT))
         ]))
     }
 

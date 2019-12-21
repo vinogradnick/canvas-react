@@ -1,5 +1,5 @@
 import Point3D from "./Point3D";
-import { PAGE_SIZE } from "./const";
+import {LOCAL} from "./const";
 
 export class Matrix {
 
@@ -9,16 +9,13 @@ export class Matrix {
         points.map(item => [item.getX, item.getY, item.getZ, 1]);
 
 
-
-
-
     public static pointNormalize = (...arr: number[]) => {
         return arr[0] / arr[1]
     }
 
     public static convertToPoints = (arr) =>
         arr.map((matrix, idx) =>
-            new Point3D((arr[idx][0] / matrix[3]) + (PAGE_SIZE.WIDTH / 2), -1 * ((arr[idx][1] / matrix[3]) + (PAGE_SIZE.HEIGHT / 2)), arr[idx][2], 1)
+            new Point3D((arr[idx][0] / matrix[3]) + LOCAL.CENTER_WIDTH, -1 * ((arr[idx][1] / matrix[3]) + LOCAL.CENTER_HEIGHT), arr[idx][2], 1)
         )
 
 
@@ -38,6 +35,7 @@ export class Matrix {
                     point.z, pEnd[idx].z, t)
             ));
     }
+
     public static multiplyMatrix(A, B) {
         var rowsA = A.length, colsA = A[0].length,
             rowsB = B.length, colsB = B[0].length,

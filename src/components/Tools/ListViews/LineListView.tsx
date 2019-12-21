@@ -53,8 +53,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                                 shrink: true,
                             }}
 
-                            value={line.points[0]._x}
-                            onChange={(e) => line.move(new Point3D(Number(e.target.value), line.points[0]._y, line.points[0]._z), line.points[1])}
+                            value={line.points[0].x}
+                            onChange={(e) => line.move(new Point3D(Number(e.target.value), line.points[0].y, line.points[0].getZ), line.points[1])}
                         />
                         <TextField
                             className={stl.flex}
@@ -66,8 +66,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                                 shrink: true,
                             }}
 
-                            value={line.points[0]._y}
-                            onChange={(e) => line.move(new Point3D(line.points[0]._x, Number(e.target.value), line.points[0]._z), line.points[1])}
+                            value={line.points[0].y}
+                            onChange={(e) => line.move(new Point3D(line.points[0].x, Number(e.target.value), line.points[0].getZ), line.points[1])}
                         />
                         <TextField
                             className={stl.flex}
@@ -79,8 +79,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                             }}
 
 
-                            value={line.points[0]._z}
-                            onChange={(e) => line.move(new Point3D(line.points[0]._x, line.points[0]._y, Number(e.target.value)), line.points[1])}
+                            value={line.points[0].getZ}
+                            onChange={(e) => line.move(new Point3D(line.points[0].x, line.points[0].y, Number(e.target.value)), line.points[1])}
                         />
 
                     </li>
@@ -96,8 +96,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                                 shrink: true,
                             }}
 
-                            value={line.points[1]._x}
-                            onChange={(e) => line.move(line.points[0], new Point3D(Number(e.target.value), line.points[1]._y, line.points[1]._z))}
+                            value={line.points[1].x}
+                            onChange={(e) => line.move(line.points[0], new Point3D(Number(e.target.value), line.points[1].y, line.points[1].getZ))}
                         />
                         <TextField
                             className={stl.flex}
@@ -109,8 +109,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                                 shrink: true,
                             }}
 
-                            value={line.points[1]._y}
-                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1]._x, Number(e.target.value), line.points[1]._z))}
+                            value={line.points[1].y}
+                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1].x, Number(e.target.value), line.points[1].getZ))}
                         />
                         <TextField
                             className={stl.flex}
@@ -122,8 +122,8 @@ const LineListView = observer(({ line }: { line: LineShape }) => {
                             }}
 
 
-                            value={line.points[1]._z}
-                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1]._x, line.points[1]._y, Number(e.target.value)))}
+                            value={line.points[1].getZ}
+                            onChange={(e) => line.move(line.points[0], new Point3D(line.points[1].x, line.points[1].y, Number(e.target.value)))}
                         />
 
                     </li>

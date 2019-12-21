@@ -12,7 +12,7 @@ export default class GroupTool extends Component<{ group: GroupShape, focus: () 
     }
 
     render() {
-        const { key, children } = this.props.group;
+        const { key, children, level } = this.props.group;
         const modify = () => {
             this.setState({ isShow: !this.state.isShow })
         }
@@ -25,7 +25,7 @@ export default class GroupTool extends Component<{ group: GroupShape, focus: () 
                             fontWeight: this.props.group.isFocused ? 'bold' : 'normal',
                         }
                     }>
-                        <img src={folder} width="16" alt="" />   {key.slice(0, 7)}
+                        <img src={folder} width="16" alt="" />   {key.slice(0, 7) + ' - ' + level}
                     </span>
 
                     <ul>

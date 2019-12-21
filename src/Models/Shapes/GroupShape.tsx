@@ -3,7 +3,6 @@ import React from 'react';
 import uuidv4 from "../uuid";
 import { observable, IObservableValue, computed, action } from 'mobx';
 import Point3D from "../Point3D";
-import { PAGE_SIZE } from "../const";
 import { ShapeCollection } from "../ShapeCollection";
 import { ShapeType } from "../ShapeType";
 import { tsExpressionWithTypeArguments } from "@babel/types";
@@ -13,6 +12,7 @@ import GroupFigure from "../../components/Tools/GroupFigure";
 import { Matrix } from "../Matrix";
 import { app } from "../Application";
 import { LineShape } from "./LineShape";
+import { LOCAL } from "../const";
 
 
 //smirnndaya@gmail.com
@@ -26,16 +26,20 @@ interface ICoorder {
 }
 
 export class GroupShape implements IShape {
+
     @observable points: Array<Point3D>;
     @observable children: ShapeCollection;
     @observable selection: IObservableValue<boolean>;
+
     public key: string;
     public type: ShapeType;
-    public rotateAngle: number;
+    public rotateAngleX: number = 0;
+    public rotateAngleY: number = 0;
+    public rotateAngleZ: number = 0;
     public scaleFactor: number;
     public matrix4d: number[][] = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
 
-    constructor(parent: GroupShape = null, ...shapes: IShape[]) {
+    constructor(public level: number, ...shapes: IShape[]) {
 
         this.key = uuidv4();
         this.selection = observable.box(false);
@@ -44,34 +48,58 @@ export class GroupShape implements IShape {
         this.type = ShapeType.GROUP;
         this.focus = this.focus.bind(this);
     }
-
+    get rotateXMatrix() {
+        return [[1, 0, 0, 0], [0, Math.cos(this.rotateAngleX), Math.sin(this.rotateAngleX), 0], [0, -Math.sin(this.rotateAngleX), 1, 0], [0, 0, Math.cos(this.rotateAngleX), 1]]
+    }
+    get rotateYMatrix() {
+        return [[Math.cos(this.rotateAngleY), 0, -Math.sin(this.rotateAngleY), 0], [0, 1, 0, 0], [Math.sin(this.rotateAngleY), 0, Math.cos(this.rotateAngleY), 0], [0, 0, 0, 1]];
+    }
+    get rotateZMatrix() {
+        return [[Math.cos(this.rotateAngleZ), Math.sin(this.rotateAngleZ), 0, 0], [-Math.sin(this.rotateAngleZ), Math.cos(this.rotateAngleZ), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
+    }
     @action applyMatrix() {
+        if (this.rotateAngleX !== 0) {
+            console.log(this.rotateXMatrix);
+            for (let i = 0; i < this.children.collection.length; i++) {
+                const item = this.children.collection[i];
+                item.move(...item.points.map(item => this.mulPoint([item.matrix], this.rotateXMatrix)));
+            }
+        }
+        if (this.rotateAngleY !== 0) {
+            for (let i = 0; i < this.children.collection.length; i++) {
+                const item = this.children.collection[i];
+                item.move(...item.points.map(item => this.mulPoint([item.matrix], this.rotateYMatrix)));
+            }
+        }
+        if (this.rotateAngleZ !== 0) {
+            for (let i = 0; i < this.children.collection.length; i++) {
+                const item = this.children.collection[i] as LineShape;
+                item.move(...item.points.map(item => this.mulPoint([item.matrix], this.rotateZMatrix)));
+            }
+        }
+
 
         for (let i = 0; i < this.children.collection.length; i++) {
-            const item = this.children.collection[i] as LineShape;
-            item._points.set(item.points.map(item => this.mulPoint([item.matrix])));
+            const item = this.children.collection[i];
+            item.move(...item.points.map(item => this.mulPoint([item.matrix], this.matrix4d)));
         }
-        /*
-          const arr = [this.matrix];
-        const mtx = app.cameraInstance.rotationMatrix;
-        let res = Matrix.multiplyMatrix(arr, mtx);
 
-
-
-        res = [...res[0]]
-        console.log(res);
-        */
     }
-    private mulPoint(p: number[][]) {
-        const res = [...Matrix.multiplyMatrix(p, this.matrix4d)[0]];
 
-        return new Point3D((res[0] / res[3]) + PAGE_SIZE.WIDTH / 2, (res[1] / res[3]) + PAGE_SIZE.HEIGHT / 2, 0);
+    private mulPoint(p: number[][], mtx) {
+
+        const res = [...Matrix.multiplyMatrix(p, mtx)[0]];
+        console.log(res);
+        return new Point3D((res[0] / res[3]) + LOCAL.CENTER_WIDTH, (-1 * (res[1] / res[3])) + LOCAL.CENTER_HEIGHT, res[2] / res[3]);
     }
 
     @computed get isFocused() {
 
         return this.selection.get();
     }
+    draw = (ctx: CanvasRenderingContext2D) => {
+        this.children.collection.forEach(item => item.draw(ctx));
+    };
     static CreateGroupShape(group: any) {
         const shapes = group.children.collection;
         const newArr = [];
@@ -90,7 +118,7 @@ export class GroupShape implements IShape {
         const { maxX, minX, maxY, minY, maxZ, minZ } = this.children.maxAndMinPoint;
         const avX = ((maxX - minX) / 2) + minX;
         const avY = ((maxY - minY) / 2) + minY;
-        const avZ = ((maxZ - minY) / 2) + minY;
+        const avZ = ((maxZ - minZ) / 2) + minZ;
         return new Point3D(avX, avY, avZ);
     }
 
@@ -100,6 +128,13 @@ export class GroupShape implements IShape {
 
     @computed get groupCoord() {
         return this.children.maxAndMinPoint;
+
+    }
+
+    @computed get ReactiveComponent() {
+        return (<group key={this.key}>
+            {this.children.collection.map(item => item.ReactiveComponent)}
+        </group>);
 
     }
 

@@ -10,10 +10,15 @@ import { Matrix } from '../Matrix';
 import { app } from '../Application';
 import { ACTIVE_CSS } from '../const';
 import * as THREE from 'three';
+import SplineView from '../../components/3DView/SplineView';
+import { ColorR } from "../Bis";
+import { rd } from "../../Store/ShapeStore";
 
 export class LineShape implements IShape {
+
     public readonly key: string;
     public readonly type: ShapeType;
+    @observable line: IObservableValue<THREE.Line>;
     @observable _points: IObservableValue<Array<Point3D>>;
 
 
@@ -31,11 +36,21 @@ export class LineShape implements IShape {
     public get points() {
         return this._points.get();
     }
+
     public set setPoints(value: Point3D[]) {
         this._points.set(value);
     }
+    draw = (ctx: CanvasRenderingContext2D) => {
+        const [p1, p2] = this.points;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineWidth = this.isFocused ? 5 : 1;
+        ctx.stroke();
+        console.log(ctx);
+    }
 
-    constructor(points: Array<Point3D>) {
+    constructor(points: Array<Point3D>, public color: ColorR = new ColorR(rd(255), rd(255), rd(255))) {
         this._points = observable.box(points);
         this.selection = observable.box(false);
         this.key = uuidv4();
@@ -54,6 +69,22 @@ export class LineShape implements IShape {
         }
         console.log(this);
     }
+    @computed get A() {
+        const [start, end] = this.points;
+        return start.getY - end.getY;
+    }
+    @computed get B() {
+        const [start, end] = this.points;
+
+        return end.getX - start.getX;
+    }
+    @computed get C() {
+        const [start, end] = this.points;
+        return start.getX * end.getY - end.getX * start.getY;
+    }
+    @computed get ABsqrt() {
+        return Math.sqrt(Math.pow(this.A, 2) + Math.pow(this.B, 2));
+    }
 
     @computed get formula() {
         const [start, end] = this.points;
@@ -66,9 +97,10 @@ export class LineShape implements IShape {
     @computed get Component() {
         return <LineTool
             key={this.key}
+            color={this.color.rbga}
             move={this.move}
             activate={this.focus}
-            points={app.cameraInstance.active ? this.projectionPoints : this.points}
+            points={this.points}
             activation={this.selection.get()}
         />
     }
@@ -76,21 +108,25 @@ export class LineShape implements IShape {
     get ListViewComponent() {
         return <LineListView line={this} key={this.key} />
     }
-    @computed get Line3() {
-        var curve = new THREE.CatmullRomCurve3(this.points.map(item => new THREE.Vector3(item.getX, item.getY, item.z)));
-        var points = curve.getPoints(50);
 
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-        var curveObject = new THREE.Line(geometry, material);
-        curveObject.uuid = this.key;
-        curveObject.castShadow = true;
-        curveObject.receiveShadow = true;
-        return curveObject;
+    @computed get ReactiveComponent() {
+        return <SplineView line={this} />
     }
-
 }
+
+// @computed get Line3() {
+
+//     var geometry = new THREE.BufferGeometry().setFromPoints(this.points.map(item => new THREE.Vector3(item.getX, item.getY, item.z)));
+//     var material = new THREE.LineBasicMaterial({ color: 0xff0000, opacity: 0.35 });
+
+//     var curveObject = new THREE.Line(geometry, material);
+//     curveObject.uuid = this.key;
+//     curveObject.castShadow = true;
+//     curveObject.receiveShadow = true;
+//     return curveObject;
+// }
+
+
 /*
 
 camera.isActive.get() === false ? <LineTool

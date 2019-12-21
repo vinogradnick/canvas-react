@@ -8,10 +8,11 @@ import { ShapeType } from '../ShapeType';
 import LineListView from "../../components/Tools/ListViews/LineListView";
 import { Matrix } from '../Matrix';
 import { app } from '../Application';
-import { ACTIVE_CSS } from '../const';
+import { ACTIVE_CSS, LOCAL } from '../const';
 import CircleTool from '../../components/Tools/CircleTool';
 
 export class CircleShape implements IShape {
+    draw: (ctx: CanvasRenderingContext2D) => void;
     public readonly key: string;
     public readonly type: ShapeType;
     @observable _points: IObservableValue<Array<Point3D>>;
@@ -30,6 +31,7 @@ export class CircleShape implements IShape {
     public get points() {
         return this._points.get();
     }
+
     public set setPoints(value: Point3D[]) {
         this._points.set(value);
     }
@@ -46,10 +48,14 @@ export class CircleShape implements IShape {
     @action move(...points: Array<Point3D>) {
         console.log(points);
         this.setPoints = points;
+        LOCAL.setX(points[0].x - 500);
+
+        LOCAL.setY(-1 * (points[0].y - 375));
     }
 
     @action focus() {
         if (this.selection) {
+            LOCAL.setActive();
             this.selection.set(!this.selection.get());
         }
         console.log(this);
@@ -62,6 +68,7 @@ export class CircleShape implements IShape {
 
     @computed get Component() {
         return <CircleTool
+            color={'flex'}
             key={this.key}
             move={this.move}
             activate={this.focus}
@@ -74,6 +81,10 @@ export class CircleShape implements IShape {
         return <div>
 
         </div>
+    }
+
+    get ReactiveComponent() {
+        return <></>
     }
 
 }

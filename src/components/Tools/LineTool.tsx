@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Point3D from "../../Models/Point3D";
-import { observer } from 'mobx-react';
-import { CANVAS_OFFSET } from '../../Models/const';
-import { app } from '../../Models/Application';
+import {observer} from 'mobx-react';
+import {CANVAS_OFFSET} from '../../Models/const';
+import {app} from '../../Models/Application';
 
 export enum MoveStatus {
     START_MOVE,
@@ -15,7 +15,9 @@ export interface ILineToolProps {
     points: Point3D[];
     activate: () => void;
     move: (...points: Point3D[]) => void;
+    color: string;
 }
+
 @observer
 class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
@@ -40,7 +42,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
 
     public pressMove(e, status: MoveStatus) {
         console.log(this.state);
-        this.setState({ moveStatus: status });
+        this.setState({moveStatus: status});
         document.addEventListener('mousemove', this.move, false);
         document.addEventListener('mouseup', e => this.upMove(e, status), false);
     }
@@ -48,7 +50,7 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
     public upMove(e, status: MoveStatus) {
         console.log('mouse up');
 
-        this.setState({ moveStatus: status });
+        this.setState({moveStatus: status});
         document.removeEventListener('mousemove', this.move, false);
     }
 
@@ -76,14 +78,14 @@ class LineTool extends Component<ILineToolProps, { moveStatus: MoveStatus }> {
     render() {
         const [p1, p2] = this.props.points;
         return (
-            <g style={{ position: 'absolute', transform: app.cameraInstance.CameraGet }}>
+            <g style={{position: 'absolute', transform: app.cameraInstance.CameraGet}}>
                 <line
 
                     x1={p1.x}
                     x2={p2.x}
                     y1={p1.y}
                     y2={p2.y}
-                    stroke={'darkblue'}
+                    stroke={this.props.color}
                     onDoubleClick={this.activate}
                     onMouseDown={e => this.pressMove(e, MoveStatus.ALL_MOVE)}
                     strokeWidth={this.props.activation ? 3 : 1}

@@ -2,16 +2,17 @@ import { IShape } from "../Models/IShape";
 import { GroupShape } from "../Models/Shapes/GroupShape";
 import Point3D from "../Models/Point3D";
 import { LineShape } from "../Models/Shapes/LineShape";
+import { ColorR } from "../Models/Bis";
 export class Morph {
     constructor(public f: GroupShape, public s: GroupShape) {
     }
     morph() {
-        const linesF = [...this.f.children.collection];
-        const linesS = [...this.s.children.collection];
+        const linesF = [...this.f.children.collection] as LineShape[];
+        const linesS = [...this.s.children.collection] as LineShape[];
         const groupList = [];
         for (let tEval = 0; tEval < 1; tEval += 0.05) {
             const newLine = (linesF.map((item, idx) => new LineShape([this.morphVal(item.points[0], linesS[idx].points[0], tEval),
-            this.morphVal(item.points[1], linesS[idx].points[1], tEval)])) as IShape[]);
+            this.morphVal(item.points[1], linesS[idx].points[1], tEval)], ColorR.Morph(item.color, linesS[idx].color, tEval))) as IShape[]);
             groupList.push(...newLine);
         }
         return [new GroupShape(null, ...groupList)];

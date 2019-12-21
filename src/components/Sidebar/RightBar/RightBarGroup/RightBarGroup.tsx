@@ -10,50 +10,47 @@ export default class RightBarGroup extends Component<{ group?: GroupShape }> {
     }
 
     public render() {
-        const rotate = (e) => this.props.group.rotateAngle = Number(e.target.value)
+        const rotateX = (e) => this.props.group.rotateAngleX = Number(e.target.value)
+        const rotateY = (e) => this.props.group.rotateAngleY = Number(e.target.value)
+        const rotateZ = (e) => this.props.group.rotateAngleZ = Number(e.target.value)
+
         const scale = (e) => this.props.group.scaleFactor = Number(e.targer.value)
         const writeMtx = (e, row, col) => this.props.group.matrix4d[row][col] = Number(e.target.value)
         if (this.props.group !== undefined) {
             return (
 
                 <div className="right-bar-group">
-                    <TextField
-                        id="outlined-number"
-                        label="Угол поворота"
-                        type="number"
-                        margin="dense"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        variant="outlined"
-                        onInput={rotate}
-                    />
-                    <TextField
-                        id="outlined-number"
-                        label="Перемещение по Z"
-                        type="number"
-                        margin="dense"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        variant="outlined"
-                        onInput={rotate}
-                    />
-                    <TextField
-                        id="outlined-number"
-                        label="Масштабирование"
-                        type="number"
-                        margin="dense"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        variant="outlined"
 
+                    <TextField
+                        id="filled-number"
+                        label="Rotate X"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onInput={e => rotateX(e)}
+                        variant="outlined"
                     />
-                    <ButtonGroup size="small" color="primary" aria-label="outlined primary button group">
-                        <Button>По горизонтали</Button>
-                        <Button>По вертикали</Button>
-                    </ButtonGroup>
+                    <TextField
+                        id="filled-number"
+                        label="Rotate Y"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onInput={e => rotateY(e)}
+                        variant="outlined"
+                    />
+                    <TextField
+                        id="filled-number"
+                        label="Rotate Z"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onInput={e => rotateZ(e)}
+                        variant="outlined"
+                    />
                     <div className="matrix">
                         <p>Матрица 3D</p>
                         <div className="mtx-line">

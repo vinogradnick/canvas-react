@@ -16,7 +16,7 @@ const PointListView = observer(({ point, line }: { point: Point3D, line: LineSha
 
             <div>
                 <p className="point-text">X</p>
-                <input value={point._z} />
+                <input value={point.z} />
 
                 <p className="point-text">
                     Y
@@ -25,7 +25,7 @@ const PointListView = observer(({ point, line }: { point: Point3D, line: LineSha
                 <p className="point-text">
                     Z
                     </p>
-                <input value={point._z} />
+                <input value={point.z} />
 
             </div>
 

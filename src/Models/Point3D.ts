@@ -1,68 +1,96 @@
-import { PAGE_SIZE } from "./const";
-import { observable, computed, action } from 'mobx';
+import { LOCAL } from "./const";
+import { observable, computed, action, IObservableValue } from 'mobx';
 import { app } from "./Application";
 import { Matrix } from "./Matrix";
 
 export default class Point3D {
-
-    constructor(public _x: number, public _y: number, public _z: number = 0, public _w: number = 1) {
-
-    }
-    get x() {
-        return this._x;
-    }
-    get y() {
-        return this._y;
-    }
-    get z() {
-        return this._z;
+    @observable _x: IObservableValue<number>;
+    @observable _y: IObservableValue<number>;
+    @observable _z: IObservableValue<number>;
+    constructor(_x: number, _y: number, _z: number = 0, public _w: number = 1) {
+        this._x = observable.box(_x);
+        this._y = observable.box(_y);
+        this._z = observable.box(_z);
     }
 
-    get getX() {
-        return this._x - (PAGE_SIZE.WIDTH / 2);
+    @computed get x() {
+        return this._x.get();
     }
 
-    get getY() {
-        return -1 * (this._y - (PAGE_SIZE.HEIGHT / 2));
+    @computed get y() {
+        return this._y.get();
+    }
+
+    @computed get z() {
+        return this._z.get();
+    }
+
+    @computed get getX() {
+        return this.x - LOCAL.CENTER_WIDTH;
+    }
+    @computed get d2() {
+        return [this.x, this.y, 1];
+    }
+    @computed get getY() {
+        return -1 * (this.y - LOCAL.CENTER_HEIGHT);
     }
 
     set setY(num: string) {
-        this._y = -1 * (Number(num) + (PAGE_SIZE.HEIGHT / 2))
+        this._y.set(-1 * (Number(num) + LOCAL.CENTER_HEIGHT));
     }
 
     set setX(num: string) {
-
-        this._x = (Number(num) + (PAGE_SIZE.WIDTH / 2));
+        this._x.set((Number(num) + LOCAL.CENTER_WIDTH));
     }
+
+    /**
+     * Нахождение центра между двумя точками
+     * @param start Первая точка
+     * @param end Вторая точка
+     */
 
     public static centerPoint = (start: Point3D, end: Point3D) =>
-        new Point3D((start._x + end._x) / 2, (start._y + end._y) / 2)
-
+        new Point3D((start.x + end.x) / 2, (start.y + end.y) / 2)
+    /**
+     * Проверка линии на пересечение
+     * @param point
+     */
     public equal = (point: Point3D) =>
-        point._x == point._x && point._y === point._y && this._z === point._z;
+        point.x === point.x && point.y === point.y
+
     public lenBetween = (point: Point3D) =>
-        Math.sqrt(Math.pow(point._x - this._x, 2) + Math.pow(point._y - this._y, 2))
+        Math.sqrt(Math.pow(point.x - this.x, 2) + Math.pow(point.y - this.y, 2))
     public minus = (point: Point3D) => {
-        this._x -= point._x;
-        this._y -= point._y;
+        this._x.set(this.x - point.x);
+        this._y.set(this.y - point.y);
         return this;
     }
+    /**
+     * Сложение точки данной точкой
+     * @param point позиция точки
+     */
     public plus = (point: Point3D) => {
-        this._x += point._x;
-        this._y += point._y;
+        this._x.set(this.x + point.x);
+        this._y.set(this.y + point.y);
         return this;
     }
-    public static subtraction = (f: Point3D, s: Point3D) => new Point3D(f._x - s._x, f._y - s._y);
+
+    /**
+     * Вычитание точки данной точки
+     * @param point позиция точки
+     */
+    public static subtraction = (f: Point3D, s: Point3D) => new Point3D(f.x - s.x, f.y - s.y);
 
     public get stringify() {
-        return `${this._x} ${this._y}`;
+        return `${this._x.get()} ${this._y.get()}`;
     }
+
     public get matrix() {
-        return [this.getX, this.getY, this._z, 1];
+        return [this.getX, this.getY, this.z, 1];
     }
 
     public static sort(a: Point3D, b: Point3D) {
-        if (a._x > b._x) {
+        if (a._x.get() > b._x.get()) {
             if (a._y > b._y) {
                 return 1;
             } else {
@@ -70,30 +98,31 @@ export default class Point3D {
             }
         }
     }
-
-    get convert() {
-        return new Point3D(this._x, this._y, 0);
+    get matrix2d() {
+        return [this.getX, this.getY, 1]
     }
 
-    get getZ() {
-        return this._z - (PAGE_SIZE.HEIGHT / 2);
+
+    @computed get getZ() {
+        return this._z.get();
     }
 
     set setZ(num: string) {
-        this._z = Number(num);
+        this._z.set(Number(num));
     }
+
+    /**
+     * Проецирование точек в 2D
+     */
     get projection() {
         const arr = [this.matrix];
         const mtx = app.cameraInstance.rotationMatrix;
         let res = Matrix.multiplyMatrix(arr, mtx);
         res = [...res[0]]
         console.log(res);
-        return new Point3D((res[0] / res[3]) + PAGE_SIZE.WIDTH / 2, (res[1] / res[3]) + PAGE_SIZE.HEIGHT / 2, 0);
+        return new Point3D((res[0] / res[3]) + LOCAL.CENTER_WIDTH, (res[1] / res[3]) + LOCAL.CENTER_HEIGHT, 0);
     }
 
 
-    get toString() {
-        return `${this.getX} ${this.getY} ${this.getZ}`;
-    };
 
 }

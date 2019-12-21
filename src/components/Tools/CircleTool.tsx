@@ -43,7 +43,7 @@ export default class CircleTool extends Component<ILineToolProps, { moveStatus: 
         if (this.props.activation)
             switch (this.state.moveStatus) {
                 case MoveStatus.ALL_MOVE:
-                    const p = new Point3D(e.clientX - CANVAS_OFFSET.LEFT, e.clientY - CANVAS_OFFSET.TOP);
+                    const p = new Point3D(e.clientX, e.clientY);
                     this.props.move(p);
                     return;
 
